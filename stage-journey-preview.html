@@ -1,0 +1,1099 @@
+<!doctype html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#14245c">
+  <title>AI用語クイズ｜ステージが変わる画面案</title>
+  <link rel="manifest" href="./normal-quiz.webmanifest">
+  <link rel="stylesheet" href="rpg-theme.css">
+  <style>
+    :root { font-family: "BIZ UDPGothic", "BIZ UDPゴシック", sans-serif; color: #182349; background: #0b1737; font-synthesis: none; }
+    * { box-sizing: border-box; }
+    html, body { margin: 0; min-height: 100%; }
+    button { font: inherit; cursor: pointer; }
+    .app { width: min(100%, 430px); height: 100dvh; min-height: 630px; margin: auto; overflow: hidden; position: relative; background: #f5f8fc; box-shadow: 0 0 70px #0008; }
+    .topbar { position: absolute; inset: 0 0 auto; z-index: 5; height: 67px; display: flex; align-items: center; justify-content: space-between; padding: 10px 16px; color: #fff; background: #14245c; border-bottom: 3px solid #ffca6b; }
+    .brand small { display: block; color: #8de6ef; font-size: 9px; font-weight: 900; letter-spacing: .17em; }
+    .brand strong { display: block; margin-top: 2px; font-size: 20px; }
+    .stage-chip { min-width: 94px; padding: 5px 8px; border: 1px solid #9de7f4; border-radius: 10px; background: #ffffff18; text-align: center; }
+    .stage-chip small { display: block; color: #9de7f4; font-size: 9px; }
+    .stage-chip strong { font-size: 14px; }
+    .screen { display: none; position: absolute; top: 67px; bottom: 73px; left: 0; right: 0; overflow: auto; scrollbar-width: none; }
+    .screen.active { display: block; }
+    .screen::-webkit-scrollbar { display: none; }
+    .bottom-nav { position: absolute; inset: auto 0 0; z-index: 5; height: 73px; display: grid; grid-template-columns: repeat(4, 1fr); gap: 5px; padding: 6px 8px; background: #14245c; border-top: 3px solid #ffca6b; }
+    .nav-button { min-height: 54px; border: 0; border-radius: 10px; background: transparent; color: #c5d7ff; font-size: 11px; font-weight: 900; }
+    .nav-button span { display: block; font-size: 19px; }
+    .nav-button.active { background: #ffce66; color: #16265d; }
+    .stage-head { display: flex; align-items: center; justify-content: space-between; gap: 8px; padding: 12px 15px; background: #e7f1fc; }
+    .stage-head button { min-height: 42px; padding: 0 10px; border: 2px solid #a3bee0; border-radius: 9px; background: #fff; color: #284373; font-size: 12px; font-weight: 900; }
+    .stage-head button:disabled { opacity: .4; cursor: default; }
+    .stage-head strong { color: #314b78; font-size: 12px; text-align: center; }
+    .scene { position: relative; height: 300px; overflow: hidden; background-image: url("assets/school-scenes-atlas.png"); background-size: 200% 200%; background-position: 0% 0%; background-repeat: no-repeat; background-color: #75b8df; }
+    .scene::after { content: ""; position: absolute; inset: 35% 0 0; background: linear-gradient(transparent, #0c1b42ea); }
+    .scene-caption { position: absolute; z-index: 1; left: 20px; right: 20px; bottom: 20px; color: #fff; text-shadow: 0 2px 6px #001b44; }
+    .scene-caption small { color: #ffdc84; font-size: 12px; font-weight: 900; letter-spacing: .08em; }
+    .scene-caption h1 { margin: 5px 0 5px; font-size: 27px; line-height: 1.23; }
+    .scene-caption p { margin: 0; font-size: 13px; font-weight: 800; }
+    .content { padding: 16px 16px 26px; }
+    .eyebrow { color: #2678a3; font-size: 10px; font-weight: 900; letter-spacing: .13em; }
+    .card { padding: 16px; border: 2px solid #d1def0; border-radius: 16px; background: #fff; box-shadow: 4px 5px 0 #dbe6f3; }
+    .card h2 { margin: 5px 0 9px; font-size: 20px; }
+    .card p { margin: 0 0 12px; color: #3d4e73; font-size: 13px; line-height: 1.6; }
+    .progress { height: 10px; overflow: hidden; border-radius: 12px; background: #e2eaf5; }
+    .progress i { display: block; width: 24%; height: 100%; border-radius: inherit; background: linear-gradient(90deg, #28b8c4, #4f6fdf); }
+    .progress-text { display: flex; justify-content: space-between; margin-top: 7px; color: #5a6a87; font-size: 11px; font-weight: 900; }
+    .primary { width: 100%; min-height: 58px; margin-top: 17px; border: 0; border-radius: 11px; background: #2856c1; color: #fff; box-shadow: 0 5px 0 #193a8a; font-size: 17px; font-weight: 900; }
+    .secondary { width: 100%; min-height: 54px; margin-top: 13px; border: 2px solid #9eb8e2; border-radius: 11px; background: #eef4ff; color: #254487; font-size: 15px; font-weight: 900; }
+    .secondary:disabled { opacity: .55; cursor: default; }
+    .exam-actions { display: grid; grid-template-columns: 1fr 1fr; gap: 9px; margin-top: 13px; }
+    .exam-actions .secondary { min-height: 62px; margin-top: 0; padding: 8px; font-size: 13px; line-height: 1.35; }
+    .stage-note { margin: 18px 2px 0; color: #657595; font-size: 12px; line-height: 1.55; }
+    .trophy-note { margin-top: 12px; padding: 11px 13px; border: 1px solid #d2b36a; border-radius: 11px; background: #fff6dc; color: #6c501b; font-size: 12px; font-weight: 900; }
+    .sound-settings { margin-top: 12px; padding: 13px; border: 2px solid #cbd9ed; border-radius: 12px; background: #f7faff; }
+    .sound-settings-head, .sound-volume-label { display: flex; align-items: center; justify-content: space-between; gap: 12px; color: #284373; font-size: 13px; font-weight: 900; }
+    .sound-mute { min-width: 116px; min-height: 40px; border: 2px solid #9eb8e2; border-radius: 9px; background: #fff; color: #254487; font-size: 12px; font-weight: 900; }
+    .sound-mute[aria-pressed="true"] { border-color: #d29b8f; background: #fff0ec; color: #8a2c20; }
+    .sound-volume-label { margin-top: 12px; }
+    .sound-volume-label output { color: #2856c1; font-size: 14px; }
+    .sound-volume { width: 100%; height: 36px; margin: 2px 0 0; accent-color: #2856c1; }
+    .normal-screen { background: #f4f7fc; }
+    .normal-kicker { margin: 0; color: #4774a7; font-size: 12px; font-weight: 900; letter-spacing: .08em; }
+    .normal-title { margin: 6px 0 8px; color: #172d62; font-size: 27px; }
+    .normal-copy { margin: 0; color: #53647e; font-size: 14px; line-height: 1.6; }
+    .difficulty-list { display: grid; gap: 11px; margin-top: 20px; }
+    .difficulty-button { min-height: 75px; padding: 13px 15px; border: 2px solid #aabfe1; border-radius: 14px; background: #fff; color: #1e407b; text-align: left; box-shadow: 3px 4px 0 #d9e5f4; }
+    .difficulty-button strong, .difficulty-button small { display: block; }
+    .difficulty-button strong { font-size: 18px; }
+    .difficulty-button small { margin-top: 5px; color: #60708b; font-size: 12px; font-weight: 700; }
+    .normal-card { margin-top: 18px; }
+    .normal-card .question { font-size: 20px; }
+    .normal-help { margin: 15px 2px 0; color: #53647e; font-size: 13px; line-height: 1.6; }
+    .normal-controls { display: grid; grid-template-columns: repeat(3, 1fr); gap: 9px; margin-top: 14px; }
+    .normal-controls .secondary { margin-top: 0; font-size: 13px; }
+    .quiz-screen { background: linear-gradient(#d7e9fb, #f5f8fc 42%); }
+    .quiz-kicker { display: flex; align-items: center; justify-content: space-between; gap: 8px; padding: 17px 17px 12px; font-size: 12px; font-weight: 900; color: #35619a; }
+    .dialogue { display: flex; align-items: center; gap: 12px; margin-bottom: 17px; padding: 13px; border: 2px solid #294c92; border-radius: 15px; background: #fffaf0; }
+    .dialogue strong { display: block; color: #23529b; font-size: 12px; }
+    .dialogue p { margin: 4px 0 0; font-size: 13px; line-height: 1.5; }
+    .portrait { flex: none; width: 58px; height: 58px; border: 3px solid #fff; border-radius: 13px; background-image: url("assets/approved-ensemble.png"); background-size: 836px auto; background-repeat: no-repeat; box-shadow: 0 2px 8px #17306d3a; }
+    .portrait.child { background-position: -89px -182px; }
+    .portrait.middle { background-position: -201px -122px; }
+    .portrait.high { background-position: -331px -121px; }
+    .portrait.university { background-position: -471px -151px; }
+    .portrait.worker { background-position: -591px -191px; }
+    .portrait.scholar { background-position: -596px -86px; }
+    .portrait.sage { background-position: -726px -136px; }
+    .question-type { color: #3978a9; font-size: 11px; font-weight: 900; }
+    .question { margin: 10px 0 0; font-size: 19px; line-height: 1.5; }
+    .answers { display: grid; gap: 9px; margin-top: 16px; }
+    .answer { min-height: 55px; display: flex; align-items: center; gap: 11px; padding: 8px 12px; border: 2px solid #c7d7eb; border-radius: 11px; background: #fff; text-align: left; color: #1f315e; font-size: 14px; font-weight: 900; }
+    .answer b { display: grid; place-items: center; flex: none; width: 30px; height: 30px; border-radius: 7px; background: #3057ab; color: #fff; }
+    .answer.correct { border-color: #2aa682; background: #def8ed; }
+    .answer.wrong { border-color: #e38275; background: #ffeae5; }
+    .feedback { min-height: 46px; margin-top: 14px; color: #465879; font-size: 13px; line-height: 1.5; }
+    .quiz-status { margin: 0 0 13px; color: #3d638e; font-size: 12px; font-weight: 900; }
+    .voice-button { width: 100%; min-height: 50px; margin-top: 11px; border: 2px solid #9cc5d6; border-radius: 11px; background: #e7f8fa; color: #1e5775; font-size: 14px; font-weight: 900; }
+    .battle-screen { background: #111f52; color: #fff; }
+    .battle-heading { display: flex; align-items: flex-start; justify-content: space-between; gap: 8px; padding: 18px 16px 12px; }
+    .battle-heading small { color: #82e4ef; font-weight: 900; letter-spacing: .13em; }
+    .battle-heading h1 { margin: 4px 0 0; font-size: 24px; }
+    .battle-scene { position: relative; height: 284px; margin: 0 14px; overflow: hidden; border: 3px solid #fff; border-radius: 16px; background-image: url("assets/forest-battle.png"); background-size: cover; background-position: center; }
+    .battle-scene::after { content: ""; position: absolute; inset: 48% 0 0; background: linear-gradient(transparent, #101d4bdf); }
+    .battle-label { position: absolute; z-index: 1; left: 14px; right: 14px; bottom: 13px; font-size: 15px; font-weight: 900; text-shadow: 0 2px 5px #001; }
+    .rival { display: flex; align-items: center; gap: 12px; margin: 15px 14px; padding: 11px 13px; border: 2px solid #7797d4; border-radius: 13px; background: #253774; }
+    .opponent-portrait { flex: none; width: 76px; height: 76px; border: 3px solid #fff; border-radius: 13px; background-image: url("assets/monster-opponents-atlas.png"); background-size: 400% 200%; background-repeat: no-repeat; box-shadow: 0 2px 8px #09183d88; }
+    .rival small { color: #90e6ee; font-size: 10px; font-weight: 900; }
+    .rival strong { display: block; margin-top: 3px; font-size: 17px; }
+    .rival p { margin: 4px 0 0; color: #d8e6ff; font-size: 12px; }
+    .battle-options { display: grid; gap: 9px; padding: 0 14px 24px; }
+    .battle-option { min-height: 61px; padding: 11px 14px; border: 2px solid #718ed0; border-radius: 12px; background: #2a3c7a; color: #fff; text-align: left; }
+    .battle-option strong { display: block; font-size: 14px; }
+    .battle-option small { display: block; margin-top: 4px; color: #c7d8ff; font-size: 11px; }
+    .battle-play { padding: 0 14px 21px; }
+    .battle-play .card { color: #182349; }
+    .battle-play .answer { width: 100%; margin-top: 8px; }
+    .battle-play .feedback { color: #ecf5ff; }
+    .battle-play .quiz-status { color: #ffdc84; font-size: 14px; }
+    .battle-play .secondary, .battle-play .voice-button { margin-top: 9px; }
+    .hidden { display: none !important; }
+    .voice-state { flex: none; padding: 4px 9px; border-radius: 999px; background: #d8453a; color: #fff; font-size: 11px; font-weight: 900; letter-spacing: 0; }
+    .voice-state:empty { display: none; }
+    .voice-state.speaking { background: #2856c1; }
+    .question.long { font-size: 16px; }
+    .answer:disabled { cursor: default; }
+    .answer .mark { flex: none; margin-left: auto; font-style: normal; font-size: 20px; font-weight: 900; }
+    .answer.correct b { background: #1b8a68; }
+    .answer.correct .mark { color: #1b8a68; }
+    .answer.wrong b { background: #cf4a39; }
+    .answer.wrong .mark { color: #cf4a39; }
+    .primary:disabled { background: #8a98b8; box-shadow: 0 5px 0 #6b7897; cursor: default; }
+    .battle-option:disabled { opacity: .6; cursor: default; }
+    .voice-button.on { border-color: #e38275; background: #ffe9e4; color: #8a2c20; }
+    .result-card .seal.stamp { display: inline-grid; place-items: center; width: 88px; height: 88px; border: 4px solid #d23b2a; border-radius: 50%; color: #d23b2a; font-size: 22px; font-weight: 900; transform: rotate(-8deg); }
+    .result-card .seal.stamp.gray { border-color: #7a879f; color: #7a879f; }
+    .result-backdrop { position: absolute; z-index: 10; inset: 0; display: grid; place-items: center; padding: 20px; background: #091838d9; }
+    .result-card { width: 100%; padding: 23px; border: 3px solid #ffcf74; border-radius: 18px; background: #fffdf6; color: #192d63; text-align: center; box-shadow: 0 15px 40px #0008; }
+    .result-card .seal { font-size: 36px; }
+    .result-card h2 { margin: 9px 0; font-size: 24px; }
+    .result-card p { margin: 0; font-size: 14px; line-height: 1.6; }
+    .demo-note { margin: 0; padding: 0 15px 20px; color: #b7c9ed; font-size: 11px; line-height: 1.5; }
+    @media (max-width: 390px) { .scene { height: 255px; } .scene-caption h1 { font-size: 24px; } .battle-scene { height: 225px; } }
+  </style>
+</head>
+<body>
+  <div class="app">
+    <header class="topbar"><div class="brand"><small>LEARN · BATTLE · GROW</small><strong>AI用語クイズ</strong></div><div class="stage-chip"><small>いまのレベル</small><strong id="rank">小学生</strong></div></header>
+    <main class="screen active" id="home">
+      <div class="stage-head"><button type="button" id="prev-stage">← 前のレベル</button><strong id="stage-count">01 / 08</strong><button type="button" id="next-stage">次のレベル →</button></div>
+      <div class="scene" id="home-scene" role="img" aria-label="現在のステージの風景"><div class="scene-caption"><small id="scene-kicker">STAGE 01 · SCHOOL</small><h1 id="scene-title">はじめてのAI教室</h1><p id="scene-copy">学校から、知識の冒険が始まる。</p></div></div>
+      <div class="content"><div class="card"><span class="eyebrow">TODAY'S QUEST</span><h2 id="mission-title">今日の用語クエスト</h2><p id="mission-copy">身近なAIの言葉から少しずつ覚えよう。</p><div class="progress"><i id="progress-fill"></i></div><div class="progress-text"><span id="progress-label">学習の道のり</span><span id="progress-percent">12%</span></div></div><button class="primary" type="button" id="start-lesson" data-go="quiz">このレベルの授業へ ›</button><button class="secondary" type="button" data-go="normal">通常モード（音声クイズ）</button><div class="exam-actions"><button class="secondary" type="button" id="start-midterm">中間テスト</button><button class="secondary" type="button" id="start-final">期末テスト</button></div><button class="secondary" type="button" data-go="battle">対戦の舞台を見る</button><div class="trophy-note" id="trophy-count">🏆 獲得トロフィー 0個</div><section class="sound-settings" aria-labelledby="sound-settings-title"><div class="sound-settings-head"><strong id="sound-settings-title">効果音の設定</strong><button class="sound-mute" type="button" id="sound-mute" aria-pressed="false">🔊 音あり</button></div><label class="sound-volume-label" for="sound-volume"><span>音量</span><output id="sound-volume-value" for="sound-volume">82%</output></label><input class="sound-volume" id="sound-volume" type="range" min="0" max="100" step="1" value="82" aria-label="効果音の音量"></section><p class="stage-note">授業で用語を学び、中間テスト10問と期末テスト20問に80%以上で合格すると次のレベルが開きます。対戦ではトロフィーを獲得できます。</p></div>
+    </main>
+    <main class="screen quiz-screen" id="quiz"><div class="quiz-kicker"><span id="quiz-kicker">小学生編 · 今日の授業</span><span class="voice-state" id="quiz-voice-state" aria-live="polite"></span></div><div class="content"><div class="dialogue"><div class="portrait child" id="guide-portrait" role="img" aria-label="会話相手"></div><div><strong id="guide-name">学園の仲間</strong><p id="guide-line">一緒にやってみよう！</p></div></div><p class="quiz-status" id="quiz-status">問題 1 / 5</p><div class="card"><span class="question-type" id="question-type">QUESTION 01</span><h1 class="question" id="question">読み込み中...</h1></div><div class="answers" id="answers"></div><div class="feedback" id="feedback" role="status">答えをひとつ選んでみよう。</div><button class="secondary" type="button" id="reset-answer" disabled>次の問題へ →</button><button class="voice-button" type="button" id="quiz-voice">🔊 読み上げて声で答える</button></div></main>
+    <main class="screen battle-screen" id="battle"><div class="battle-heading"><div><small>KNOWLEDGE BATTLE</small><h1 id="battle-title">森のひらめき対戦</h1></div><span class="voice-state" id="battle-voice-state" aria-live="polite"></span></div><div class="battle-scene" id="battle-scene" role="img" aria-label="対戦の舞台"><div class="rpg-shadow" aria-hidden="true"></div><img class="rpg-enemy" id="battle-rpg-enemy" alt="" hidden><div class="rpg-fx-layer" id="battle-fx-layer" aria-hidden="true"></div><div class="battle-label" id="battle-label">木漏れ日の森で、知識を試そう。</div></div><div class="rpg-gauge-row" id="battle-rpg-gauge" aria-label="戦闘ゲージ"><div class="rpg-gauge"><small>敵の結晶</small><div class="rpg-gauge-icons" id="enemy-gauge"></div></div><div class="rpg-gauge"><small>自分の盾</small><div class="rpg-gauge-icons" id="player-gauge"></div></div></div><div class="rival"><div class="opponent-portrait" id="rival-portrait" role="img" aria-label="対戦相手"></div><div><small id="enemy-level">ENEMY · ★1</small><strong id="rival-name">いたずらスライム</strong><p id="rival-line">覚えた言葉で勝負！</p></div></div><div class="battle-options" id="battle-menu"><button class="battle-option" type="button" id="start-battle"><strong>モンスターに挑む</strong><small>先に3点取った方の勝ち</small></button></div><div class="battle-play hidden" id="battle-play"><p class="quiz-status" id="battle-status">あなた 0点 · モンスター 0点</p><div class="card"><span class="question-type" id="battle-question-type">BATTLE QUESTION</span><h2 class="question" id="battle-question">問題</h2></div><div id="battle-answers"></div><div class="feedback" id="battle-feedback" role="status">答えをひとつ選ぼう。</div><button class="secondary" type="button" id="battle-next" disabled>次の問題へ →</button><button class="voice-button" type="button" id="battle-voice">🔊 読み上げて声で答える</button></div><p class="demo-note">知識で勝負する1人用の対戦です。通信対戦・賞金は含みません。</p></main>
+    <main class="screen normal-screen" id="normal"><div class="content"><section id="normal-select"><p class="normal-kicker">NORMAL MODE</p><h1 class="normal-title">音声で答えるクイズ</h1><p class="normal-copy">短い問題と3つの選択肢です。番号で答えてください。</p><div class="difficulty-list"><button class="difficulty-button" type="button" data-normal-difficulty="beginner"><strong>初級</strong><small>まず覚えたい基本用語</small></button><button class="difficulty-button" type="button" data-normal-difficulty="intermediate"><strong>中級</strong><small>仕組みや使い方を理解する用語</small></button><button class="difficulty-button" type="button" data-normal-difficulty="advanced"><strong>上級</strong><small>専門的なAI・開発用語</small></button></div><p class="normal-help">問題の途中では1番から3番、解説の後は「次」または「次の問題」と言います。「終了」で難易度選択へ戻ります。</p></section><section id="normal-play" class="hidden"><p class="normal-kicker" id="normal-difficulty">初級</p><p class="quiz-status" id="normal-status">問題 1 / 10</p><div class="card normal-card"><span class="question-type" id="normal-question-type">QUESTION 01</span><h1 class="question" id="normal-question">読み込み中...</h1></div><div class="answers" id="normal-answers"></div><div class="feedback" id="normal-feedback" role="status">読み上げを待っています。</div><button class="voice-button" type="button" id="normal-voice">🔊 読み上げて声で答える</button><div class="normal-controls"><button class="secondary" type="button" id="normal-stop">⏹ ストップ</button><button class="secondary" type="button" id="normal-next">次の問題へ →</button><button class="secondary" type="button" id="normal-end">終了</button></div></section></div></main>
+    <nav class="bottom-nav" aria-label="画面切り替え"><button class="nav-button active" type="button" data-go="home"><span>⌂</span>舞台</button><button class="nav-button" type="button" data-go="normal"><span>◉</span>通常</button><button class="nav-button" type="button" data-go="quiz"><span>✎</span>授業</button><button class="nav-button" type="button" data-go="battle"><span>✦</span>対戦</button></nav>
+    <div class="result-backdrop hidden" id="result-backdrop"><div class="result-card" role="dialog" aria-modal="true" aria-labelledby="result-title"><div class="seal" id="result-seal">🏆</div><h2 id="result-title">結果</h2><p id="result-message"></p><button class="primary" type="button" id="result-close">舞台へ戻る</button></div></div>
+  </div>
+  <script type="module">
+    import { selectQuestions, normalizeVoice, createSession, submitAnswer, advanceSession, skipQuestion, isLastTurn, stageStatus, toRomanNumeral, activeCompanion, voiceContinuation } from './game-core.js';
+    import { buildNormalChoices, heardLabel, normalFeedbackSpeech, normalLabel, normalPrompt, parseNormalCommand, selectNormalQuestions, withHeard } from './normal-mode-core.js';
+    import { createInteractionGate } from './interaction-gate.js';
+    import { createQuizSounds } from './quiz-sounds.js';
+    import { createFx } from './rpg-fx.js';
+    import { RPG_ASSETS, battleGauge, pickEnemy, pickScene, themeForStage } from './rpg-stages.js';
+    const STORAGE_KEY = 'ai-term-quiz-progress-v1';
+    const RPG_SCENE_KEY = 'ai-term-quiz-rpg-scene-v1';
+    const schoolSheet = 'url("assets/school-scenes-atlas.png")';
+    const advancedSheet = 'url("assets/advanced-scenes-atlas.png")';
+    const battleSheet = 'url("assets/battle-worlds-atlas.png")';
+    const positions = ['0% 0%', '100% 0%', '0% 100%', '100% 100%'];
+    const enemies = ['いたずらスライム','森のゴブリン','ゾンビ学生','骸骨の剣士','石のオーガ','魔界の司書','影のドラゴン','堕天の守護者'];
+    const enemyPositions = ['0% 0%','33.333% 0%','66.667% 0%','100% 0%','0% 100%','33.333% 100%','66.667% 100%','100% 100%'];
+    const battleWorlds = [
+      { title:'森のひらめき対戦', line:'木漏れ日の森で、知識を試そう。' },
+      { title:'学園大会', line:'広い会場で、知識の頂点へ。', position:positions[0] },
+      { title:'魔界の知恵比べ', line:'不思議な書庫で、難問に挑む。', position:positions[1] },
+      { title:'天界の知恵比べ', line:'雲の上で、ひらめきを競う。', position:positions[2] },
+      { title:'星の書庫・最終戦', line:'学んだすべてを、ここで試す。', position:positions[3] }
+    ];
+    const stages = [
+      { name:'小学生', title:'はじめてのAI教室', copy:'学校から、知識の冒険が始まる。', place:'校庭', guide:'あかり', guideClass:'child', line:'一緒に覚えたら、もっと楽しいよ！', rival:'あかり', rivalClass:'child', rivalLine:'まだAI用語、ぜんぶ言えないでしょ？' },
+      { name:'中学生', title:'図書室の調査クエスト', copy:'資料を探して、言葉の意味をつなげよう。', place:'図書室', guide:'りく', guideClass:'middle', line:'一緒に調べたら結構いけるな。', rival:'りく', rivalClass:'middle', rivalLine:'その説明、ちょっと甘くない?' },
+      { name:'高校生', title:'放課後の研究クエスト', copy:'仕組みを知ると、使い方が変わる。', place:'高校', guide:'みずき', guideClass:'high', line:'一緒に研究しよう、面白いよ。', rival:'みずき', rivalClass:'high', rivalLine:'仕組みまで説明できる？私は余裕。' },
+      { name:'大学生', title:'キャンパスの探究クエスト', copy:'専門知識を組み合わせ、新しい問いへ。', place:'大学', guide:'そう', guideClass:'university', line:'一緒に整理しよう、卒業も近い。', rival:'そう', rivalClass:'university', rivalLine:'専門用語で語れなきゃ話にならない。' },
+      { name:'一般(社会人)', title:'街で使うAIクエスト', copy:'学んだことを、仕事の判断に活かす。', place:'ビジネス街', guide:'職場の先輩', guideClass:'worker', line:'仕事で使うなら、情報の扱いも大切だよ。', rival:'仕事のライバル', rivalClass:'worker' },
+      { name:'大学教授', title:'講義室の知識クエスト', copy:'学びを整理して、次の世代へ伝える。', place:'講義室', guide:'教授', guideClass:'scholar', line:'説明できる知識は、より深く身につくよ。', rival:'知識の挑戦者', rivalClass:'scholar' },
+      { name:'AI学者', title:'研究所の検証クエスト', copy:'AIの限界を調べ、より良い使い方を探す。', place:'AI研究所', guide:'AI研究者', guideClass:'scholar', line:'仮説を立てて、結果を確かめよう。', rival:'研究所の挑戦者', rivalClass:'scholar' },
+      { name:'AI仙人', title:'雲上の知恵クエスト', copy:'知識の先へ。問い続ける旅は終わらない。', place:'雲上の書庫', guide:'AI仙人', guideClass:'sage', line:'自信満々な答えほど、根拠を見てみよう。', rival:'最後の知恵比べ', rivalClass:'sage' }
+    ];
+    const previewParams = new URLSearchParams(location.search);
+    const requestedStage = Number(previewParams.get('stage'));
+    let progress = { unlocked: 0, trophies: [], totalAnswers: 0, totalCorrect: 0, coverage: null, exams: Array.from({ length: 8 }, () => ({ midterm:'locked', final:'locked' })) };
+    let stageIndex = previewParams.has('stage') && Number.isInteger(requestedStage) ? Math.min(7, Math.max(0, requestedStage - 1)) : progress.unlocked;
+    let bank = null;
+    let loadError = false;
+    let pendingStage = null;
+    let elementaryScene = null;
+    const plays = { lesson: null, battle: null };
+    const normal = { session: null, difficulty: null, choice: null, phase: 'select', token: 0, recognizer: null, retries: 0, notice: '', heard: '' };
+    const normalDifficultyLabels = { beginner: '初級', intermediate: '中級', advanced: '上級' };
+    const Recognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+    const voice = { on: false, mode: null, token: 0, retries: 0, recognizer: null };
+    const quizSounds = createQuizSounds();
+    const interactionGate = createInteractionGate();
+    const rpgFx = createFx(document, { reducedMotion: window.matchMedia('(prefers-reduced-motion: reduce)').matches });
+    const voiceButtonIds = { lesson: 'quiz-voice', battle: 'battle-voice' };
+    const feedbackIds = { lesson: 'feedback', battle: 'battle-feedback' };
+
+    function byId(id) { return document.getElementById(id); }
+    function pad(number) { return String(number).padStart(2, '0'); }
+    function storedSceneId() {
+      try { return localStorage.getItem(RPG_SCENE_KEY); } catch { return null; }
+    }
+    function rememberScene(id) {
+      try { localStorage.setItem(RPG_SCENE_KEY, id); } catch {}
+    }
+    function elementarySceneForSession() {
+      if (!elementaryScene) {
+        elementaryScene = pickScene('elementary', storedSceneId(), Math.random);
+        if (elementaryScene) rememberScene(elementaryScene.id);
+      }
+      return elementaryScene;
+    }
+    function setRpgTheme(screenId, index) {
+      const screen = byId(screenId);
+      const theme = themeForStage(index);
+      if (!theme) {
+        delete screen.dataset.rpg;
+        screen.style.removeProperty('--rpg-scene-image');
+        screen.style.removeProperty('--rpg-battle-bg');
+        return null;
+      }
+      screen.dataset.rpg = theme;
+      const scene = elementarySceneForSession();
+      if (scene) screen.style.setProperty('--rpg-scene-image', 'url("' + scene.path + '")');
+      screen.style.setProperty('--rpg-battle-bg', 'url("' + RPG_ASSETS[theme].battleBackground + '")');
+      return theme;
+    }
+    function setGauge(containerId, active, imagePath, label) {
+      const container = byId(containerId);
+      container.replaceChildren();
+      for (let index = 0; index < 3; index++) {
+        const icon = document.createElement('img');
+        icon.src = imagePath;
+        icon.alt = label;
+        if (index >= active) icon.classList.add('inactive');
+        container.append(icon);
+      }
+    }
+    function renderRpgGauge(session) {
+      const gauge = battleGauge(session);
+      setGauge('enemy-gauge', gauge.enemy, RPG_ASSETS.elementary.ui.emerald, '敵の結晶');
+      setGauge('player-gauge', gauge.player, RPG_ASSETS.elementary.ui.shield, '自分の盾');
+    }
+    function renderRpgEnemy(enemy) {
+      const image = byId('battle-rpg-enemy');
+      if (!enemy) {
+        image.hidden = true;
+        image.removeAttribute('src');
+        image.alt = '';
+        return;
+      }
+      image.hidden = false;
+      image.src = enemy.path;
+      image.alt = enemy.name;
+      image.onerror = () => { image.hidden = true; };
+    }
+    function progressFromServer(data) {
+      return { unlocked: data.unlocked, trophies: data.trophies, totalAnswers: data.totalAnswers, totalCorrect: data.totalCorrect, coverage: data.coverage, exams: data.exams };
+    }
+    async function loadProgress() {
+      const response = await fetch('/api/progress');
+      return progressFromServer(await response.json());
+    }
+
+    let audio = null, master = null;
+    function effectVolume() { const settings = quizSounds.getSettings(); return settings.muted ? 0 : settings.volume; }
+    function applyEffectVolume() { if (master) master.gain.value = effectVolume(); }
+    function audioContext() {
+      const Context = window.AudioContext || window.webkitAudioContext;
+      if (!Context) return null;
+      if (!audio) { audio = new Context(); master = audio.createGain(); master.gain.value = effectVolume(); master.connect(audio.destination); }
+      if (audio.state === 'suspended') audio.resume();
+      return audio;
+    }
+    function bell(freq, start, dur, vol, type = 'sine') {
+      const a = audioContext(); if (!a) return;
+      const t = a.currentTime + start, o = a.createOscillator(), g = a.createGain();
+      o.type = type; o.frequency.value = freq;
+      g.gain.setValueAtTime(.0001, t); g.gain.exponentialRampToValueAtTime(vol, t + .008); g.gain.exponentialRampToValueAtTime(.0001, t + dur);
+      o.connect(g); g.connect(master); o.start(t); o.stop(t + dur + .02);
+    }
+    function noise(start, dur, vol) {
+      const a = audioContext(); if (!a) return;
+      const t = a.currentTime + start, buffer = a.createBuffer(1, a.sampleRate * dur, a.sampleRate), data = buffer.getChannelData(0);
+      for (let i = 0; i < data.length; i++) data[i] = Math.random() * 2 - 1;
+      const source = a.createBufferSource(), g = a.createGain(), filter = a.createBiquadFilter();
+      filter.type = 'lowpass'; filter.frequency.value = 300;
+      g.gain.setValueAtTime(vol, t); g.gain.exponentialRampToValueAtTime(.0001, t + dur);
+      source.buffer = buffer; source.connect(filter); filter.connect(g); g.connect(master); source.start(t); source.stop(t + dur + .01);
+    }
+    function correctSound() { quizSounds.play('correct'); }
+    function wrongSound() { quizSounds.play('wrong'); }
+    function tapSound() { try { bell(1046, 0, .06, .16); } catch {} }
+
+    let cachedVoices = [];
+    function refreshVoices() { cachedVoices = window.speechSynthesis ? speechSynthesis.getVoices() : []; }
+    if (window.speechSynthesis) {
+      refreshVoices();
+      speechSynthesis.onvoiceschanged = refreshVoices;
+    }
+    function pickJapaneseVoice() {
+      const ja = cachedVoices.filter(v => v.lang && v.lang.toLowerCase().startsWith('ja'));
+      if (!ja.length) return null;
+      return ja.find(v => !v.localService) || ja.find(v => /neural|enhanced|premium|google/i.test(v.name)) || ja[0];
+    }
+
+    function showScreen(id) {
+      rpgFx.cancel();
+      quizSounds.stop();
+      if (id !== 'normal' && normal.session) clearNormalSession();
+      if (voice.on && voice.mode !== ({ quiz: 'lesson', battle: 'battle' })[id]) voiceStop();
+      document.querySelectorAll('.screen').forEach(el => el.classList.toggle('active', el.id === id));
+      document.querySelectorAll('.nav-button').forEach(el => el.classList.toggle('active', el.dataset.go === id));
+      byId(id).scrollTop = 0;
+    }
+    function scene(el, sheet, position) { el.style.backgroundImage = sheet; el.style.backgroundPosition = position; el.style.backgroundSize = '200% 200%'; }
+    function portrait(el, className) { el.className = 'portrait ' + className; }
+    function questionLabel(question) { return question.direction === 'term_to_meaning' ? 'この用語の意味は？' : 'この説明の用語は？'; }
+    function withoutReading(text) { return text.replace(/\s*\([A-Za-z0-9 .\/+&'_-]+\)/g, '') || text; }
+    function lockedText(index) { return stages[index - 1].name + 'の期末テストに合格すると挑戦できます。'; }
+    function missionText(status) {
+      if (loadError) return '問題データ(data/questions.json)を読み込めませんでした。ローカルサーバー経由で開いてください。';
+      if (status === 'locked') return '🔒 ' + lockedText(stageIndex);
+      if (status === 'cleared') return '期末テスト合格済み。復習の授業や対戦にも挑戦できます。';
+      const exams = progress.exams[stageIndex];
+      if (exams.final === 'available') return stageIndex === stages.length - 1
+        ? '最後の期末テストに80%以上で合格すると、全レベル修了です。'
+        : '期末テストに80%以上で合格すると、' + stages[stageIndex + 1].name + 'が開きます。';
+      if (exams.midterm === 'passed') return '発展用語まで一通り学ぶと、期末テストに挑戦できます。';
+      if (exams.midterm === 'available') return '中間テストに挑戦できます。10問中8問以上で合格です。';
+      return '授業で基礎・標準の用語を一通り学ぶと、中間テストに挑戦できます。';
+    }
+
+    function renderHome() {
+      const s = stages[stageIndex];
+      const status = stageStatus(progress, stageIndex);
+      byId('rank').textContent = stages[progress.unlocked].name;
+      byId('stage-count').textContent = toRomanNumeral(stageIndex + 1) + ' / ' + toRomanNumeral(stages.length);
+      byId('prev-stage').disabled = stageIndex === 0;
+      byId('next-stage').disabled = stageIndex === stages.length - 1;
+      byId('scene-kicker').textContent = 'STAGE ' + pad(stageIndex + 1) + ' · ' + s.place + (status === 'locked' ? ' · 🔒 未開放' : status === 'cleared' ? ' · 合格済み' : '');
+      byId('scene-title').textContent = s.title;
+      byId('scene-copy').textContent = s.copy;
+      byId('mission-title').textContent = s.name + 'の用語クエスト';
+      byId('mission-copy').textContent = missionText(status);
+      const coverage = progress.coverage ? progress.coverage[stageIndex] : { seen: 0, total: 0 };
+      const percent = coverage.total ? Math.round(coverage.seen / coverage.total * 100) : 0;
+      byId('progress-fill').style.width = percent + '%';
+      byId('progress-label').textContent = progress.coverage ? 'このレベルの語 ' + coverage.seen + ' / ' + coverage.total : '学習の道のり';
+      byId('progress-percent').textContent = percent + '%';
+      scene(byId('home-scene'), stageIndex < 4 ? schoolSheet : advancedSheet, positions[stageIndex % 4]);
+      const start = byId('start-lesson');
+      start.disabled = !bank || status === 'locked';
+      start.textContent = !bank ? (loadError ? '問題データを読み込めません' : '問題を読み込み中…')
+        : status === 'locked' ? '🔒 まだ挑戦できません'
+        : plays.lesson && plays.lesson.stage === stageIndex && plays.lesson.kind === 'lesson' ? '授業のつづきへ ›' : 'このレベルの授業へ ›';
+      const exams = progress.exams[stageIndex];
+      for (const [type, label] of [['midterm', '中間テスト'], ['final', '期末テスト']]) {
+        const button = byId('start-' + type);
+        const examStatus = exams[type];
+        button.disabled = !bank || status === 'locked' || examStatus === 'locked';
+        button.textContent = examStatus === 'passed' ? label + '\n合格済み・再挑戦' : examStatus === 'available' ? label + '\n挑戦する' : '🔒 ' + label;
+      }
+      byId('trophy-count').textContent = '🏆 獲得トロフィー ' + progress.trophies.length + '個 · 通算 ' + progress.totalAnswers + '問中 ' + progress.totalCorrect + '問正解';
+      setRpgTheme('home', stageIndex);
+    }
+
+    function renderBattleStage() {
+      const world = battleWorlds[stageIndex < 2 ? 0 : stageIndex < 4 ? 1 : stageIndex < 6 ? 2 : stageIndex === 6 ? 3 : 4];
+      const theme = setRpgTheme('battle', stageIndex);
+      const rpgEnemy = pickEnemy(theme, stageStatus(progress, stageIndex) === 'cleared');
+      byId('rival-name').textContent = rpgEnemy ? rpgEnemy.name : enemies[stageIndex];
+      byId('rival-line').textContent = rpgEnemy ? rpgEnemy.line : stages[stageIndex].name + 'で出会う対戦相手 · ' + (progress.trophies.includes(stageIndex) ? 'トロフィー獲得済み' : '倒すとトロフィー獲得');
+      byId('enemy-level').textContent = rpgEnemy ? 'ENEMY · ★1' : 'ENEMY · ' + '★'.repeat(stageIndex + 1);
+      byId('rival-portrait').style.backgroundPosition = enemyPositions[stageIndex];
+      byId('rival-portrait').setAttribute('aria-label', rpgEnemy ? rpgEnemy.name : enemies[stageIndex]);
+      renderRpgEnemy(rpgEnemy);
+      renderRpgGauge(plays.battle && plays.battle.stage === stageIndex ? plays.battle.session : null);
+      byId('battle-title').textContent = world.title;
+      byId('battle-label').textContent = world.line;
+      if (rpgEnemy) {
+        byId('battle-scene').style.backgroundImage = '';
+        byId('battle-scene').style.backgroundSize = '';
+        byId('battle-scene').style.backgroundPosition = '';
+      } else if (stageIndex < 2) {
+        byId('battle-scene').style.backgroundImage = 'url("assets/forest-battle.png")';
+        byId('battle-scene').style.backgroundSize = 'cover';
+        byId('battle-scene').style.backgroundPosition = 'center';
+      } else {
+        scene(byId('battle-scene'), battleSheet, world.position);
+      }
+    }
+
+    function render() { renderHome(); renderBattleStage(); renderBattle(); }
+
+    function renderAnswers(container, mode) {
+      const play = plays[mode];
+      const { session } = play;
+      const question = session.questions[session.index];
+      container.replaceChildren();
+      question.choices.forEach((choice, index) => {
+        const button = document.createElement('button'); button.type = 'button'; button.className = 'answer';
+        const number = document.createElement('b'); number.textContent = index + 1;
+        const mark = document.createElement('i'); mark.className = 'mark';
+        if (session.answered) {
+          button.setAttribute('aria-disabled', 'true');
+          if (index === question.correct_index) { button.classList.add('correct'); mark.textContent = '○'; }
+          else if (index === play.choice) { button.classList.add('wrong'); mark.textContent = '✗'; }
+        }
+        button.append(number, document.createTextNode(choice), mark);
+        button.addEventListener('click', event => {
+          event.stopPropagation();
+          if (session.answered) next(mode);
+          else choose(mode, index);
+        });
+        container.append(button);
+      });
+    }
+
+    function detailText(question) {
+      const parts = [];
+      if (question.why) parts.push(question.why);
+      if (question.example) parts.push(question.example);
+      return parts.join(' ');
+    }
+    function feedbackText(mode) {
+      const { session } = plays[mode];
+      const question = session.questions[session.index];
+      const correct = session.results[session.results.length - 1].correct;
+      const head = correct ? '○ 正解！' : '✗ 残念！ 正解は' + (question.correct_index + 1) + '番です。';
+      if (mode !== 'lesson') return head;
+      const detail = detailText(question);
+      return detail ? head + ' ' + detail : head;
+    }
+
+    function renderQuestion(mode, ids) {
+      const { session } = plays[mode];
+      const question = session.questions[session.index];
+      byId(ids.type).textContent = (mode === 'battle' ? 'BATTLE ' : 'QUESTION ') + pad(session.index + 1) + ' · ' + questionLabel(question);
+      byId(ids.question).textContent = question.prompt;
+      byId(ids.question).classList.toggle('long', question.prompt.length > 40);
+      renderAnswers(byId(ids.answers), mode);
+      byId(ids.feedback).textContent = session.answered ? feedbackText(mode) : '答えをひとつ選んでみよう。';
+      byId(ids.next).disabled = !session.answered;
+      byId(ids.next).textContent = session.answered && isLastTurn(session) ? '結果を見る →' : '次の問題へ →';
+      updateVoiceButtons();
+    }
+
+    function renderLesson() {
+      const play = plays.lesson;
+      const index = play ? play.stage : stageIndex;
+      const s = stages[index];
+      const companion = activeCompanion(s, progress, index);
+      const kindLabel = play && play.kind === 'midterm' ? '中間テスト' : play && play.kind === 'final' ? '期末テスト' : '今日の授業';
+      byId('quiz-kicker').textContent = s.name + '編 · ' + (play ? kindLabel : '🔒 未開放');
+      byId('guide-name').textContent = companion.name;
+      byId('guide-line').textContent = companion.line;
+      portrait(byId('guide-portrait'), companion.portraitClass);
+      setRpgTheme('quiz', index);
+      ['reset-answer', 'quiz-voice'].forEach(id => byId(id).classList.toggle('hidden', !play));
+      if (!play) {
+        byId('quiz-status').textContent = '';
+        byId('question-type').textContent = 'LOCKED';
+        byId('question').textContent = 'このレベルはまだ開いていません';
+        byId('question').classList.remove('long');
+        byId('answers').replaceChildren();
+        byId('feedback').textContent = '🔒 ' + lockedText(stageIndex);
+        return;
+      }
+      byId('quiz-status').textContent = kindLabel + ' · 問題 ' + (play.session.index + 1) + ' / ' + play.session.questions.length + ' · 正解 ' + play.session.correct;
+      renderQuestion('lesson', { type: 'question-type', question: 'question', answers: 'answers', feedback: 'feedback', next: 'reset-answer' });
+    }
+
+    function renderBattle() {
+      const play = plays.battle && plays.battle.stage === stageIndex ? plays.battle : null;
+      byId('battle-menu').classList.toggle('hidden', Boolean(play));
+      byId('battle-play').classList.toggle('hidden', !play);
+      if (!play) {
+        const locked = stageStatus(progress, stageIndex) === 'locked';
+        const start = byId('start-battle');
+        start.disabled = !bank || locked;
+        start.querySelector('strong').textContent = locked ? '🔒 まだ挑戦できません' : 'モンスターに挑む';
+        start.querySelector('small').textContent = locked ? lockedText(stageIndex) : '先に3点取った方の勝ち。正解であなたに1点、まちがえると相手に1点';
+        renderRpgGauge(null);
+        return;
+      }
+      const enemy = pickEnemy(themeForStage(play.stage), stageStatus(progress, play.stage) === 'cleared');
+      byId('battle-status').textContent = 'あなた ' + play.session.correct + '点 · ' + (enemy ? enemy.name : enemies[play.stage]) + ' ' + play.session.wrong + '点(3点先取)';
+      renderRpgGauge(play.session);
+      renderQuestion('battle', { type: 'battle-question-type', question: 'battle-question', answers: 'battle-answers', feedback: 'battle-feedback', next: 'battle-next' });
+    }
+
+    async function openLesson() {
+      if (!bank) return;
+      if (stageStatus(progress, stageIndex) === 'locked') {
+        if (plays.lesson && plays.lesson.stage !== stageIndex) plays.lesson = null;
+      } else if (!plays.lesson || plays.lesson.stage !== stageIndex || plays.lesson.kind !== 'lesson') {
+        const response = await fetch('/api/lesson?stage=' + stageIndex);
+        const data = await response.json();
+        plays.lesson = { stage: stageIndex, kind: 'lesson', choice: null, session: createSession(data.questions, 'lesson') };
+      }
+      renderLesson();
+      showScreen('quiz');
+    }
+
+    async function openExam(examType) {
+      if (!bank || stageStatus(progress, stageIndex) === 'locked' || progress.exams[stageIndex][examType] === 'locked') return;
+      if (!plays.lesson || plays.lesson.stage !== stageIndex || plays.lesson.kind !== examType) {
+        const response = await fetch('/api/exam?stage=' + stageIndex + '&type=' + examType);
+        if (!response.ok) return;
+        const data = await response.json();
+        plays.lesson = { stage: stageIndex, kind: examType, choice: null, session: createSession(data.questions, examType) };
+      }
+      renderLesson();
+      showScreen('quiz');
+    }
+
+    function startBattle() {
+      if (!bank || stageStatus(progress, stageIndex) === 'locked') return;
+      audioContext();
+      tapSound();
+      plays.battle = { stage: stageIndex, choice: null, session: createSession(selectQuestions(bank, stageIndex, {}, 5), 'battle') };
+      renderBattle();
+    }
+
+    function refresh(mode) { if (mode === 'lesson') renderLesson(); else renderBattle(); }
+    function playRpgResult(mode, correct) {
+      const play = plays[mode];
+      if (!play || themeForStage(play.stage) !== 'elementary') return;
+      if (mode === 'lesson') {
+        const answer = byId('answers').children[play.choice];
+        if (correct) rpgFx.correctGlow(answer);
+        return;
+      }
+      if (correct) {
+        if (play.session.correct >= 3) rpgFx.victory();
+        else rpgFx.attack({ slash: RPG_ASSETS.elementary.ui.slash, hit: RPG_ASSETS.elementary.ui.hit });
+      } else {
+        rpgFx.hurt();
+      }
+    }
+
+    function choose(mode, index) {
+      return interactionGate.run(mode, () => {
+        const play = plays[mode];
+        if (!play || play.session.answered) return;
+        play.session = submitAnswer(play.session, index);
+        play.choice = index;
+        const correct = play.session.results[play.session.results.length - 1].correct;
+        if (correct) correctSound(); else wrongSound();
+        refresh(mode);
+        playRpgResult(mode, correct);
+        if (voice.on && voice.mode === mode) voiceStep();
+      });
+    }
+
+    function next(mode) {
+      return interactionGate.run(mode, async () => {
+        const play = plays[mode];
+        if (!play || !play.session.answered) return;
+        tapSound();
+        play.session = advanceSession(play.session);
+        play.choice = null;
+        if (play.session.finished) { await finish(mode); return; }
+        refresh(mode);
+        byId(mode === 'lesson' ? 'quiz' : 'battle').scrollTop = 0;
+        if (voice.on && voice.mode === mode) voiceStep();
+      });
+    }
+
+    async function finish(mode) {
+      const { session, stage, kind } = plays[mode];
+      plays[mode] = null;
+      const spoke = voice.on;
+      voiceStop();
+      const result = { stamp: null, gray: false, seal: '' };
+      if (mode === 'lesson' && kind === 'lesson') {
+        const termResults = session.results.map(r => ({ term: r.id, correct: r.correct }));
+        const response = await fetch('/api/lesson/result', {
+          method: 'POST', headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ stage, results: termResults }),
+        });
+        progress = progressFromServer(await response.json());
+        const score = session.results.length + '問中' + session.correct + '問正解。';
+        if (session.won) {
+          Object.assign(result, { stamp: '合格', title: '授業クリア！' });
+          result.message = score + '新しい用語を学びました。中間・期末テストの解放状況を確認しましょう。';
+        } else {
+          Object.assign(result, { stamp: '復習', gray: true, title: 'もう一歩', message: score + '何度でも授業で復習できます。' });
+        }
+      } else if (mode === 'lesson') {
+        const before = progress.unlocked;
+        const termResults = session.results.map(r => ({ term: r.id, correct: r.correct }));
+        const response = await fetch('/api/exam/result', {
+          method: 'POST', headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ stage, type: kind, results: termResults }),
+        });
+        const data = await response.json();
+        progress = progressFromServer(data);
+        const label = kind === 'midterm' ? '中間テスト' : '期末テスト';
+        const score = session.results.length + '問中' + session.correct + '問正解。';
+        if (data.passed) {
+          Object.assign(result, { stamp: '合格', title: label + '合格！' });
+          if (kind === 'final' && progress.unlocked > before) {
+            pendingStage = progress.unlocked;
+            result.message = score + stages[progress.unlocked].name + 'のレベルが開きました。';
+          } else if (kind === 'final') result.message = score + 'すべてのレベルを修了しました。';
+          else if (progress.exams[stage].final === 'available') result.message = score + '期末テストに挑戦できます。';
+          else result.message = score + '発展用語まで学ぶと期末テストが開きます。';
+        } else {
+          Object.assign(result, { stamp: '再挑戦', gray: true, title: 'もう一歩', message: score + '80%以上で合格です。授業で復習して再挑戦しましょう。' });
+        }
+      } else {
+        const had = progress.trophies.includes(stage);
+        const response = await fetch('/api/battle/result', {
+          method: 'POST', headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ stage, correct: session.correct, total: session.results.length }),
+        });
+        progress = progressFromServer(await response.json());
+        if (session.won) Object.assign(result, { seal: '🏆', title: '勝利！', message: enemies[stage] + (had ? 'を倒した！ このトロフィーは獲得済みです。' : 'を倒して、トロフィーを獲得！') });
+        else Object.assign(result, { stamp: '敗北', gray: true, title: '敗北…', message: enemies[stage] + 'に3点先取された。授業で復習して再挑戦しよう。' });
+      }
+      render();
+      const seal = byId('result-seal');
+      seal.className = 'seal' + (result.stamp ? ' stamp' : '') + (result.gray ? ' gray' : '');
+      seal.textContent = result.stamp || result.seal;
+      byId('result-title').textContent = result.title;
+      byId('result-message').textContent = result.message;
+      byId('result-close').textContent = pendingStage !== null ? '新しいレベルへ ›' : '舞台へ戻る';
+      byId('result-backdrop').classList.remove('hidden');
+      if (spoke && window.speechSynthesis) speak([result.title + result.message], voice.token, () => {});
+    }
+
+    function closeResult() {
+      byId('result-backdrop').classList.add('hidden');
+      if (window.speechSynthesis) speechSynthesis.cancel();
+      if (pendingStage !== null) { stageIndex = pendingStage; pendingStage = null; }
+      render();
+      showScreen('home');
+    }
+
+    function quit(mode) {
+      voiceStop();
+      plays[mode] = null;
+      render();
+      showScreen('home');
+    }
+
+    function setVoiceState(text, speaking) {
+      document.querySelectorAll('.voice-state').forEach(el => { el.textContent = text; el.classList.toggle('speaking', Boolean(speaking)); });
+    }
+    function updateVoiceButtons() {
+      Object.entries(voiceButtonIds).forEach(([mode, id]) => {
+        const on = voice.on && voice.mode === mode;
+        byId(id).classList.toggle('on', on);
+        byId(id).textContent = on ? '■ 音声をとめる' : '🔊 読み上げて声で答える';
+      });
+    }
+    function haltAudio() {
+      voice.token++;
+      if (window.speechSynthesis) speechSynthesis.cancel();
+      if (voice.recognizer) { voice.recognizer.onend = null; try { voice.recognizer.abort(); } catch {} voice.recognizer = null; }
+    }
+    function voiceStop(message) {
+      const mode = voice.mode;
+      voice.on = false;
+      voice.mode = null;
+      haltAudio();
+      quizSounds.stop();
+      setVoiceState('');
+      updateVoiceButtons();
+      if (message && mode) byId(feedbackIds[mode]).textContent = message;
+    }
+    function toggleVoice(mode) {
+      if (voice.on && voice.mode === mode) { voiceStop(); return; }
+      if (!plays[mode]) return;
+      if (!window.speechSynthesis) { byId(feedbackIds[mode]).textContent = 'このブラウザーは読み上げに対応していません。'; return; }
+      audioContext();
+      voiceStop();
+      Object.assign(voice, { on: true, mode, retries: 0 });
+      updateVoiceButtons();
+      voiceStep();
+    }
+    function speak(lines, token, done) {
+      if (token !== voice.token) return;
+      const parts = lines.flatMap(line => line.split(/(?<=。)/)).map(part => part.trim()).filter(Boolean);
+      let ended = false;
+      const finishOnce = () => { if (!ended && token === voice.token) { ended = true; done(); } };
+      if (voice.on) setVoiceState('読み上げ中', true);
+      const voice = pickJapaneseVoice();
+      parts.forEach((text, index) => {
+        const utterance = new SpeechSynthesisUtterance(text);
+        utterance.lang = 'ja-JP';
+        if (voice) utterance.voice = voice;
+        if (index === parts.length - 1) { utterance.onend = finishOnce; utterance.onerror = finishOnce; }
+        speechSynthesis.speak(utterance);
+      });
+    }
+    function sentence(text) { const plain = text.replace(/`/g, ''); return /[。！？]$/.test(plain) ? plain : plain + '。'; }
+    function questionSpeech(question) {
+      const intro = question.direction === 'term_to_meaning'
+        ? '問題。' + withoutReading(question.prompt) + '、の意味はどれでしょう。'
+        : '問題。' + sentence(question.prompt) + 'これは何のことでしょう。';
+      const choices = question.choices.map((choice, index) => (index + 1) + '番。' + sentence(question.direction === 'meaning_to_term' ? withoutReading(choice) : choice));
+      return [intro, ...choices, '番号でお答えください。'];
+    }
+    function feedbackSpeech(mode) {
+      const { session, stage } = plays[mode];
+      const question = session.questions[session.index];
+      const correct = session.results[session.results.length - 1].correct;
+      let text = correct ? '正解！' : '残念。正解は' + (question.correct_index + 1) + '番です。';
+      if (mode === 'lesson') { const detail = detailText(question); if (detail) text += detail; }
+      if (mode === 'battle') text += 'あなた' + session.correct + '点、' + enemies[stage] + session.wrong + '点。';
+      return [text];
+    }
+
+    function abortNormalRecognizer() {
+      normal.heard = '';
+      if (!normal.recognizer) return;
+      normal.recognizer.onend = null;
+      try { normal.recognizer.abort(); } catch {}
+      normal.recognizer = null;
+    }
+    function stopNormal() {
+      normal.token += 1;
+      abortNormalRecognizer();
+      quizSounds.stop();
+      if (window.speechSynthesis) speechSynthesis.cancel();
+    }
+    function clearNormalSession() {
+      stopNormal();
+      normal.session = null;
+      normal.difficulty = null;
+      normal.choice = null;
+      normal.phase = 'select';
+      normal.retries = 0;
+      normal.notice = '';
+    }
+    function normalChoiceText(choice) {
+      const text = normalLabel(choice);
+      const firstSentence = text.match(/^.*?[。！？]/)?.[0] || text;
+      return firstSentence.length <= 42 ? firstSentence : `${firstSentence.slice(0, 41)}…`;
+    }
+    function normalQuestionSpeech(question) {
+      const choices = question.choices.map((choice, index) => `${index + 1}番。${normalChoiceText(choice)}`);
+      return [`問題。${normalPrompt(question)}`, ...choices, '1番から3番でお答えください。'];
+    }
+    function normalSessionQuestion(question) {
+      const choiceModel = buildNormalChoices(question);
+      return { ...question, choices: choiceModel.choices, correct_index: choiceModel.correctIndex };
+    }
+    function renderNormal() {
+      const session = normal.session;
+      byId('normal-select').classList.toggle('hidden', Boolean(session));
+      byId('normal-play').classList.toggle('hidden', !session);
+      if (!session) return;
+      const question = session.questions[session.index];
+      byId('normal-difficulty').textContent = normalDifficultyLabels[normal.difficulty] || '通常モード';
+      byId('normal-status').textContent = `問題 ${session.index + 1} / ${session.questions.length}`;
+      byId('normal-question-type').textContent = `QUESTION ${String(session.index + 1).padStart(2, '0')}`;
+      byId('normal-question').textContent = normalPrompt(question);
+      const answers = byId('normal-answers');
+      answers.innerHTML = '';
+      question.choices.forEach((choice, index) => {
+        const button = document.createElement('button');
+        const isCorrect = index === question.correct_index;
+        button.className = 'answer';
+        if (session.answered && isCorrect) button.classList.add('correct');
+        if (session.answered && normal.choice === index && !isCorrect) button.classList.add('wrong');
+        button.disabled = session.answered || normal.phase !== 'answer';
+        button.innerHTML = `<span class="answer-number">${index + 1}</span><span>${normalChoiceText(choice)}</span>`;
+        button.addEventListener('click', () => normalAnswer(index));
+        answers.appendChild(button);
+      });
+      const defaultNotice = normal.phase === 'answer'
+        ? '番号で答えてください。'
+        : normal.phase === 'next' ? '「次」または「次の問題」と言ってください。' : '読み上げています。';
+      byId('normal-feedback').textContent = withHeard(normal.notice || defaultNotice, normal.heard);
+      byId('normal-voice').textContent = session.answered ? '🔊 解説をもう一度聞く' : '🔊 問題をもう一度聞く';
+    }
+    function normalSpeak(lines, token, done) {
+      const parts = lines.flatMap(line => String(line || '').split(/(?<=[。！？])\s*/)).map(text => text.trim()).filter(Boolean);
+      if (!window.speechSynthesis || !parts.length) {
+        if (token === normal.token) done();
+        return;
+      }
+      const selectedVoice = pickJapaneseVoice();
+      let remaining = parts.length;
+      let completed = false;
+      const finish = () => {
+        if (completed || token !== normal.token) return;
+        completed = true;
+        done();
+      };
+      parts.forEach(text => {
+        const utterance = new SpeechSynthesisUtterance(text);
+        utterance.lang = 'ja-JP';
+        utterance.rate = 1.03;
+        if (selectedVoice) utterance.voice = selectedVoice;
+        utterance.onend = () => { remaining -= 1; if (remaining === 0) finish(); };
+        utterance.onerror = () => { remaining -= 1; if (remaining === 0) finish(); };
+        speechSynthesis.speak(utterance);
+      });
+    }
+    function normalRetry(phase, token, notice) {
+      if (token !== normal.token || !normal.session) return;
+      normal.retries += 1;
+      if (normal.retries > 2) {
+        normal.notice = '聞き取れませんでした。画面の番号または「次の問題へ」ボタンを押してください。';
+        renderNormal();
+        return;
+      }
+      normal.notice = notice;
+      renderNormal();
+      setTimeout(() => {
+        if (token === normal.token && normal.session) normalListen(phase, true);
+      }, 450);
+    }
+    function normalListen(phase, retry = false) {
+      if (!normal.session) return;
+      const token = ++normal.token;
+      if (!retry) normal.retries = 0;
+      normal.phase = phase;
+      normal.notice = phase === 'answer' ? '1番から3番で答えてください。' : '「次」または「次の問題」と言ってください。';
+      renderNormal();
+      if (!Recognition) {
+        normal.notice = 'このブラウザでは音声認識を使えません。選択肢または「次の問題へ」ボタンを押してください。';
+        renderNormal();
+        return;
+      }
+      const recognizer = new Recognition();
+      normal.recognizer = recognizer;
+      recognizer.lang = 'ja-JP';
+      recognizer.interimResults = false;
+      recognizer.continuous = false;
+      let handled = false;
+      recognizer.onresult = event => {
+        if (token !== normal.token) return;
+        handled = true;
+        const transcript = Array.from(event.results).map(result => result[0].transcript).join(' ');
+        const command = parseNormalCommand(transcript, phase, 3);
+        normal.heard = command ? '' : heardLabel({ transcript });
+        normal.recognizer = null;
+        if (command?.type === 'exit') normalExit();
+        else if (command?.type === 'answer') normalAnswer(command.index);
+        else if (command?.type === 'next') normalNext();
+        else if (command?.type === 'stop') normalStop();
+        else {
+          normalRetry(phase, token, phase === 'answer' ? '「1番」から「3番」で答えてください。もう一度聞き取ります。' : '「次」または「次の問題」と言ってください。もう一度聞き取ります。');
+        }
+      };
+      recognizer.onerror = event => {
+        if (token !== normal.token) return;
+        handled = true;
+        normal.heard = heardLabel({ error: event.error });
+        normal.recognizer = null;
+        if (event.error === 'not-allowed') {
+          normal.notice = 'マイクの利用を許可してください。ボタン操作でも進められます。';
+          renderNormal();
+        } else {
+          normalRetry(phase, token, '聞き取れませんでした。もう一度聞き取ります。');
+        }
+      };
+      recognizer.onend = () => {
+        if (token !== normal.token || handled) return;
+        normal.heard = heardLabel();
+        normal.recognizer = null;
+        normalRetry(phase, token, phase === 'answer' ? '聞き取れませんでした。「1番」から「3番」で、もう一度答えてください。' : '聞き取れませんでした。「次」と言ってください。もう一度聞き取ります。');
+      };
+      try { recognizer.start(); } catch {
+        normal.notice = '音声認識を開始できませんでした。画面のボタンを押してください。';
+        renderNormal();
+      }
+    }
+    function readNormalQuestion() {
+      if (!normal.session) return;
+      stopNormal();
+      const token = ++normal.token;
+      normal.phase = 'speaking';
+      normal.notice = '問題と選択肢を読み上げています。';
+      renderNormal();
+      normalSpeak(normalQuestionSpeech(normal.session.questions[normal.session.index]), token, () => normalListen('answer'));
+    }
+    function readNormalFeedback() {
+      if (!normal.session?.answered) return;
+      stopNormal();
+      const token = ++normal.token;
+      const question = normal.session.questions[normal.session.index];
+      normal.phase = 'speaking';
+      normal.notice = '正解と補足を読み上げています。';
+      renderNormal();
+      normalSpeak([normalFeedbackSpeech(question, { choices: question.choices, correctIndex: question.correct_index }, normal.choice), '「次」または「次の問題」と言ってください。'], token, () => normalListen('next'));
+    }
+    function startNormal(difficulty) {
+      if (!bank) return;
+      clearNormalSession();
+      normal.difficulty = difficulty;
+      normal.session = createSession(selectNormalQuestions(bank, difficulty, 10).map(normalSessionQuestion), 'lesson');
+      normal.phase = 'speaking';
+      normal.notice = '';
+      renderNormal();
+      readNormalQuestion();
+    }
+    function normalAnswer(index) {
+      return interactionGate.run('normal-answer', async () => {
+        if (!normal.session || normal.phase !== 'answer' || index < 0 || index > 2) return;
+        abortNormalRecognizer();
+        const question = normal.session.questions[normal.session.index];
+        const correct = index === question.correct_index;
+        const token = ++normal.token;
+        normal.session = submitAnswer(normal.session, index);
+        normal.choice = index;
+        normal.phase = 'speaking';
+        normal.notice = correct ? '正解です。解説を読み上げます。' : '残念です。正解と解説を読み上げます。';
+        renderNormal();
+        if (correct) correctSound(); else wrongSound();
+        await quizSounds.whenIdle();
+        if (token !== normal.token || !normal.session?.answered) return;
+        readNormalFeedback();
+      });
+    }
+    function normalNext() {
+      return interactionGate.run('normal-next', () => {
+        if (!normal.session) return;
+        const base = normal.session.answered ? normal.session : skipQuestion(normal.session);
+        const next = advanceSession(base);
+        if (next.finished) {
+          clearNormalSession();
+          renderNormal();
+          return;
+        }
+        normal.session = next;
+        normal.choice = null;
+        readNormalQuestion();
+      });
+    }
+    function normalStop() {
+      return interactionGate.run('normal-stop', () => {
+        if (!normal.session) return;
+        if (normal.phase === 'speaking') {
+          const phase = normal.session.answered ? 'next' : 'answer';
+          stopNormal();
+          normalListen(phase);
+          return;
+        }
+        stopNormal();
+        normal.notice = '停止しました。ボタンで操作してください。';
+        renderNormal();
+      });
+    }
+    function normalExit() {
+      clearNormalSession();
+      renderNormal();
+    }
+    async function voiceStep() {
+      if (!voice.on) return;
+      const play = plays[voice.mode];
+      if (!play) { voiceStop(); return; }
+      haltAudio();
+      const token = voice.token;
+      const answered = play.session.answered;
+      const lines = answered ? feedbackSpeech(voice.mode) : questionSpeech(play.session.questions[play.session.index]);
+      const mode = voice.mode;
+      if (answered) await quizSounds.whenIdle();
+      if (token !== voice.token || !voice.on || voice.mode !== mode) return;
+      speak(lines, token, () => {
+        if (voiceContinuation(answered) === 'advance') next(mode);
+        else listen(token);
+      });
+    }
+    function listen(token) {
+      if (token !== voice.token || !voice.on) return;
+      if (!Recognition) { voiceStop('このブラウザーは音声の聞き取りに対応していません。画面の番号をタップしてください。'); return; }
+      const recognizer = new Recognition();
+      recognizer.lang = 'ja-JP';
+      recognizer.continuous = false;
+      recognizer.interimResults = false;
+      recognizer.maxAlternatives = 3;
+      voice.recognizer = recognizer;
+      let heard = false;
+      recognizer.onresult = event => { if (token !== voice.token) return; heard = true; hear(Array.from(event.results[0], alternative => alternative.transcript)); };
+      recognizer.onerror = event => {
+        if (token !== voice.token) return;
+        if (['not-allowed', 'service-not-allowed', 'audio-capture'].includes(event.error)) { heard = true; voiceStop('マイクが使えません。ブラウザーのマイク許可を確認してください。'); }
+      };
+      recognizer.onend = () => { if (token === voice.token && !heard) retry(); };
+      setVoiceState('聞き取り中', false);
+      try { recognizer.start(); } catch { voiceStop('音声の聞き取りを開始できませんでした。'); }
+    }
+    function hear(transcripts) {
+      const mode = voice.mode;
+      const play = plays[mode];
+      if (!play) { voiceStop(); return; }
+      const command = transcripts.map(normalizeVoice).find(Boolean);
+      if (command && command.type === 'exit') { quit(mode); return; }
+      if (command && command.type === 'answer' && !play.session.answered) { voice.retries = 0; choose(mode, command.index); return; }
+      if (command && command.type === 'next' && play.session.answered) { voice.retries = 0; next(mode); return; }
+      retry();
+    }
+    function retry() {
+      const play = plays[voice.mode];
+      if (!play) { voiceStop(); return; }
+      voice.retries += 1;
+      if (voice.retries > 2) { voiceStop('聞き取れませんでした。画面の番号をタップして答えてください。'); return; }
+      haltAudio();
+      const token = voice.token;
+      speak([play.session.answered ? '「次」と言うと、次へ進みます。' : '番号でお答えください。'], token, () => listen(token));
+    }
+
+    function go(target) {
+      if (target === 'quiz') { openLesson(); return; }
+      if (target === 'normal') { renderNormal(); showScreen(target); return; }
+      if (target === 'battle') renderBattle(); else renderHome();
+      showScreen(target);
+    }
+
+    byId('prev-stage').addEventListener('click', () => { if (stageIndex > 0) { stageIndex--; render(); } });
+    byId('next-stage').addEventListener('click', () => { if (stageIndex < stages.length - 1) { stageIndex++; render(); } });
+    document.querySelectorAll('[data-go]').forEach(button => button.addEventListener('click', () => { tapSound(); go(button.dataset.go); }));
+    byId('reset-answer').addEventListener('click', () => next('lesson'));
+    byId('battle-next').addEventListener('click', () => next('battle'));
+    byId('start-midterm').addEventListener('click', () => { tapSound(); openExam('midterm'); });
+    byId('start-final').addEventListener('click', () => { tapSound(); openExam('final'); });
+    byId('start-battle').addEventListener('click', startBattle);
+    byId('quiz-voice').addEventListener('click', () => toggleVoice('lesson'));
+    byId('battle-voice').addEventListener('click', () => toggleVoice('battle'));
+    document.querySelectorAll('[data-normal-difficulty]').forEach(button => button.addEventListener('click', () => {
+      tapSound();
+      startNormal(button.dataset.normalDifficulty);
+    }));
+    byId('normal-voice').addEventListener('click', () => {
+      if (!normal.session) return;
+      if (normal.session.answered) readNormalFeedback(); else readNormalQuestion();
+    });
+    byId('normal-stop').addEventListener('click', normalStop);
+    byId('normal-next').addEventListener('click', normalNext);
+    byId('normal-end').addEventListener('click', normalExit);
+    function renderSoundSettings() {
+      const settings = quizSounds.getSettings();
+      byId('sound-mute').setAttribute('aria-pressed', String(settings.muted));
+      byId('sound-mute').textContent = settings.muted ? '🔇 ミュート中' : '🔊 音あり';
+      byId('sound-volume').value = Math.round(settings.volume * 100);
+      byId('sound-volume-value').value = Math.round(settings.volume * 100) + '%';
+      applyEffectVolume();
+    }
+    byId('sound-mute').addEventListener('click', () => {
+      const muted = quizSounds.getSettings().muted;
+      quizSounds.setMuted(!muted);
+      renderSoundSettings();
+      if (muted) tapSound();
+    });
+    byId('sound-volume').addEventListener('input', event => {
+      quizSounds.setVolume(Number(event.target.value) / 100);
+      renderSoundSettings();
+    });
+    for (const [screenId, mode] of [['quiz', 'lesson'], ['battle', 'battle']]) {
+      byId(screenId).addEventListener('click', event => {
+        const button = event.target.closest('button');
+        if (button && !button.classList.contains('answer')) return;
+        const play = plays[mode];
+        if (play && play.session.answered) next(mode);
+      });
+    }
+    byId('result-backdrop').addEventListener('click', closeResult);
+    renderSoundSettings();
+    render();
+    showScreen('home');
+    loadProgress().then(p => {
+      progress = p;
+      if (!previewParams.has('stage')) stageIndex = progress.unlocked;
+      render();
+    });
+    fetch('data/questions.json')
+      .then(response => { if (!response.ok) throw new Error('HTTP ' + response.status); return response.json(); })
+      .then(data => {
+        bank = data;
+        render();
+        const view = previewParams.get('view');
+        if (view === 'quiz' || view === 'battle' || view === 'normal') go(view);
+      })
+      .catch(() => { loadError = true; render(); });
+    if (previewParams.get('pwa') === '1' && 'serviceWorker' in navigator) {
+      navigator.serviceWorker.register('./normal-quiz-service-worker.js').catch(() => {});
+    }
+  </script>
+</body>
+</html>

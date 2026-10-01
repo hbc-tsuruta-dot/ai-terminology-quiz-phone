@@ -1,0 +1,753 @@
+{
+  "source": "rpg-expansion-v1",
+  "backgrounds": [
+    {
+      "name": "classroom",
+      "file": "backgrounds/classroom.png",
+      "atlas_box": [
+        0,
+        0,
+        512,
+        256
+      ],
+      "size": [
+        512,
+        256
+      ]
+    },
+    {
+      "name": "schoolyard-forest",
+      "file": "backgrounds/schoolyard-forest.png",
+      "atlas_box": [
+        512,
+        0,
+        1024,
+        256
+      ],
+      "size": [
+        512,
+        256
+      ]
+    },
+    {
+      "name": "magic-library",
+      "file": "backgrounds/magic-library.png",
+      "atlas_box": [
+        1024,
+        0,
+        1536,
+        256
+      ],
+      "size": [
+        512,
+        256
+      ]
+    },
+    {
+      "name": "lab",
+      "file": "backgrounds/lab.png",
+      "atlas_box": [
+        0,
+        256,
+        512,
+        512
+      ],
+      "size": [
+        512,
+        256
+      ]
+    },
+    {
+      "name": "observatory",
+      "file": "backgrounds/observatory.png",
+      "atlas_box": [
+        512,
+        256,
+        1024,
+        512
+      ],
+      "size": [
+        512,
+        256
+      ]
+    },
+    {
+      "name": "campus",
+      "file": "backgrounds/campus.png",
+      "atlas_box": [
+        1024,
+        256,
+        1536,
+        512
+      ],
+      "size": [
+        512,
+        256
+      ]
+    },
+    {
+      "name": "office",
+      "file": "backgrounds/office.png",
+      "atlas_box": [
+        0,
+        512,
+        512,
+        768
+      ],
+      "size": [
+        512,
+        256
+      ]
+    },
+    {
+      "name": "lecture-hall",
+      "file": "backgrounds/lecture-hall.png",
+      "atlas_box": [
+        512,
+        512,
+        1024,
+        768
+      ],
+      "size": [
+        512,
+        256
+      ]
+    },
+    {
+      "name": "ai-crystal-lab",
+      "file": "backgrounds/ai-crystal-lab.png",
+      "atlas_box": [
+        1024,
+        512,
+        1536,
+        768
+      ],
+      "size": [
+        512,
+        256
+      ]
+    },
+    {
+      "name": "forest-battle",
+      "file": "backgrounds/forest-battle.png",
+      "atlas_box": [
+        0,
+        768,
+        512,
+        1024
+      ],
+      "size": [
+        512,
+        256
+      ]
+    },
+    {
+      "name": "crystal-cave",
+      "file": "backgrounds/crystal-cave.png",
+      "atlas_box": [
+        512,
+        768,
+        1024,
+        1024
+      ],
+      "size": [
+        512,
+        256
+      ]
+    },
+    {
+      "name": "sky-altar",
+      "file": "backgrounds/sky-altar.png",
+      "atlas_box": [
+        1024,
+        768,
+        1536,
+        1024
+      ],
+      "size": [
+        512,
+        256
+      ]
+    }
+  ],
+  "enemies": [
+    {
+      "name": "leaf-slime",
+      "file": "enemies/leaf-slime.png",
+      "atlas_box": [
+        38,
+        28,
+        298,
+        305
+      ],
+      "size": [
+        260,
+        277
+      ],
+      "anchor_bottom_center": [
+        130,
+        277
+      ]
+    },
+    {
+      "name": "acorn-guardian",
+      "file": "enemies/acorn-guardian.png",
+      "atlas_box": [
+        317,
+        38,
+        626,
+        310
+      ],
+      "size": [
+        309,
+        272
+      ],
+      "anchor_bottom_center": [
+        154,
+        272
+      ]
+    },
+    {
+      "name": "flying-grimoire",
+      "file": "enemies/flying-grimoire.png",
+      "atlas_box": [
+        630,
+        55,
+        925,
+        316
+      ],
+      "size": [
+        295,
+        261
+      ],
+      "anchor_bottom_center": [
+        147,
+        261
+      ]
+    },
+    {
+      "name": "staff-owl",
+      "file": "enemies/staff-owl.png",
+      "atlas_box": [
+        940,
+        7,
+        1244,
+        315
+      ],
+      "size": [
+        304,
+        308
+      ],
+      "anchor_bottom_center": [
+        152,
+        308
+      ]
+    },
+    {
+      "name": "thunder-bat",
+      "file": "enemies/thunder-bat.png",
+      "atlas_box": [
+        11,
+        385,
+        321,
+        592
+      ],
+      "size": [
+        310,
+        207
+      ],
+      "anchor_bottom_center": [
+        155,
+        207
+      ]
+    },
+    {
+      "name": "lab-robot",
+      "file": "enemies/lab-robot.png",
+      "atlas_box": [
+        329,
+        321,
+        607,
+        625
+      ],
+      "size": [
+        278,
+        304
+      ],
+      "anchor_bottom_center": [
+        139,
+        304
+      ]
+    },
+    {
+      "name": "crystal-turtle",
+      "file": "enemies/crystal-turtle.png",
+      "atlas_box": [
+        624,
+        384,
+        917,
+        617
+      ],
+      "size": [
+        293,
+        233
+      ],
+      "anchor_bottom_center": [
+        146,
+        233
+      ]
+    },
+    {
+      "name": "stone-golem",
+      "file": "enemies/stone-golem.png",
+      "atlas_box": [
+        946,
+        311,
+        1245,
+        622
+      ],
+      "size": [
+        299,
+        311
+      ],
+      "anchor_bottom_center": [
+        149,
+        311
+      ]
+    },
+    {
+      "name": "data-fox",
+      "file": "enemies/data-fox.png",
+      "atlas_box": [
+        52,
+        633,
+        305,
+        922
+      ],
+      "size": [
+        253,
+        289
+      ],
+      "anchor_bottom_center": [
+        126,
+        289
+      ]
+    },
+    {
+      "name": "gear-beetle",
+      "file": "enemies/gear-beetle.png",
+      "atlas_box": [
+        337,
+        679,
+        622,
+        914
+      ],
+      "size": [
+        285,
+        235
+      ],
+      "anchor_bottom_center": [
+        142,
+        235
+      ]
+    },
+    {
+      "name": "ink-spirit",
+      "file": "enemies/ink-spirit.png",
+      "atlas_box": [
+        669,
+        638,
+        911,
+        921
+      ],
+      "size": [
+        242,
+        283
+      ],
+      "anchor_bottom_center": [
+        121,
+        283
+      ]
+    },
+    {
+      "name": "clock-tower-keeper",
+      "file": "enemies/clock-tower-keeper.png",
+      "atlas_box": [
+        971,
+        601,
+        1243,
+        930
+      ],
+      "size": [
+        272,
+        329
+      ],
+      "anchor_bottom_center": [
+        136,
+        329
+      ]
+    },
+    {
+      "name": "blue-dragonet",
+      "file": "enemies/blue-dragonet.png",
+      "atlas_box": [
+        36,
+        958,
+        297,
+        1221
+      ],
+      "size": [
+        261,
+        263
+      ],
+      "anchor_bottom_center": [
+        130,
+        263
+      ]
+    },
+    {
+      "name": "amethyst-golem",
+      "file": "enemies/amethyst-golem.png",
+      "atlas_box": [
+        316,
+        925,
+        620,
+        1246
+      ],
+      "size": [
+        304,
+        321
+      ],
+      "anchor_bottom_center": [
+        152,
+        321
+      ]
+    },
+    {
+      "name": "sky-kirin",
+      "file": "enemies/sky-kirin.png",
+      "atlas_box": [
+        646,
+        923,
+        920,
+        1246
+      ],
+      "size": [
+        274,
+        323
+      ],
+      "anchor_bottom_center": [
+        137,
+        323
+      ]
+    },
+    {
+      "name": "star-dragon-sage",
+      "file": "enemies/star-dragon-sage.png",
+      "atlas_box": [
+        943,
+        916,
+        1238,
+        1245
+      ],
+      "size": [
+        295,
+        329
+      ],
+      "anchor_bottom_center": [
+        147,
+        329
+      ]
+    }
+  ],
+  "ui": [
+    {
+      "name": "frame-wood",
+      "file": "ui/frame-wood.png",
+      "atlas_box": [
+        19,
+        11,
+        310,
+        307
+      ],
+      "size": [
+        291,
+        296
+      ],
+      "anchor_bottom_center": [
+        145,
+        296
+      ]
+    },
+    {
+      "name": "frame-stone",
+      "file": "ui/frame-stone.png",
+      "atlas_box": [
+        329,
+        3,
+        626,
+        298
+      ],
+      "size": [
+        297,
+        295
+      ],
+      "anchor_bottom_center": [
+        148,
+        295
+      ]
+    },
+    {
+      "name": "frame-metal",
+      "file": "ui/frame-metal.png",
+      "atlas_box": [
+        641,
+        8,
+        930,
+        300
+      ],
+      "size": [
+        289,
+        292
+      ],
+      "anchor_bottom_center": [
+        144,
+        292
+      ]
+    },
+    {
+      "name": "frame-crystal",
+      "file": "ui/frame-crystal.png",
+      "atlas_box": [
+        946,
+        1,
+        1236,
+        311
+      ],
+      "size": [
+        290,
+        310
+      ],
+      "anchor_bottom_center": [
+        145,
+        310
+      ]
+    },
+    {
+      "name": "emblem-book",
+      "file": "ui/emblem-book.png",
+      "atlas_box": [
+        31,
+        316,
+        305,
+        607
+      ],
+      "size": [
+        274,
+        291
+      ],
+      "anchor_bottom_center": [
+        137,
+        291
+      ]
+    },
+    {
+      "name": "emblem-owl",
+      "file": "ui/emblem-owl.png",
+      "atlas_box": [
+        333,
+        316,
+        622,
+        604
+      ],
+      "size": [
+        289,
+        288
+      ],
+      "anchor_bottom_center": [
+        144,
+        288
+      ]
+    },
+    {
+      "name": "emblem-graduation",
+      "file": "ui/emblem-graduation.png",
+      "atlas_box": [
+        639,
+        312,
+        931,
+        604
+      ],
+      "size": [
+        292,
+        292
+      ],
+      "anchor_bottom_center": [
+        146,
+        292
+      ]
+    },
+    {
+      "name": "emblem-dragon",
+      "file": "ui/emblem-dragon.png",
+      "atlas_box": [
+        945,
+        312,
+        1236,
+        608
+      ],
+      "size": [
+        291,
+        296
+      ],
+      "anchor_bottom_center": [
+        145,
+        296
+      ]
+    },
+    {
+      "name": "fx-slash",
+      "file": "ui/fx-slash.png",
+      "atlas_box": [
+        16,
+        618,
+        322,
+        901
+      ],
+      "size": [
+        306,
+        283
+      ],
+      "anchor_bottom_center": [
+        153,
+        283
+      ]
+    },
+    {
+      "name": "fx-hit",
+      "file": "ui/fx-hit.png",
+      "atlas_box": [
+        324,
+        606,
+        623,
+        915
+      ],
+      "size": [
+        299,
+        309
+      ],
+      "anchor_bottom_center": [
+        149,
+        309
+      ]
+    },
+    {
+      "name": "fx-shield",
+      "file": "ui/fx-shield.png",
+      "atlas_box": [
+        634,
+        622,
+        940,
+        900
+      ],
+      "size": [
+        306,
+        278
+      ],
+      "anchor_bottom_center": [
+        153,
+        278
+      ]
+    },
+    {
+      "name": "fx-magic-circle",
+      "file": "ui/fx-magic-circle.png",
+      "atlas_box": [
+        957,
+        606,
+        1250,
+        909
+      ],
+      "size": [
+        293,
+        303
+      ],
+      "anchor_bottom_center": [
+        146,
+        303
+      ]
+    },
+    {
+      "name": "chest",
+      "file": "ui/chest.png",
+      "atlas_box": [
+        29,
+        916,
+        309,
+        1206
+      ],
+      "size": [
+        280,
+        290
+      ],
+      "anchor_bottom_center": [
+        140,
+        290
+      ]
+    },
+    {
+      "name": "emerald",
+      "file": "ui/emerald.png",
+      "atlas_box": [
+        339,
+        923,
+        608,
+        1210
+      ],
+      "size": [
+        269,
+        287
+      ],
+      "anchor_bottom_center": [
+        134,
+        287
+      ]
+    },
+    {
+      "name": "trophy-book",
+      "file": "ui/trophy-book.png",
+      "atlas_box": [
+        636,
+        912,
+        942,
+        1217
+      ],
+      "size": [
+        306,
+        305
+      ],
+      "anchor_bottom_center": [
+        153,
+        305
+      ]
+    },
+    {
+      "name": "reward-star",
+      "file": "ui/reward-star.png",
+      "atlas_box": [
+        966,
+        922,
+        1240,
+        1213
+      ],
+      "size": [
+        274,
+        291
+      ],
+      "anchor_bottom_center": [
+        137,
+        291
+      ]
+    }
+  ]
+}

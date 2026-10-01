@@ -1,0 +1,413 @@
+<!doctype html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>AI用語クイズ | アニメゲーム画面案</title>
+  <style>
+    :root {
+      font-family: "BIZ UDPGothic", "BIZ UDPゴシック", sans-serif;
+      color: #182349;
+      background: #091532;
+      font-synthesis: none;
+    }
+    * { box-sizing: border-box; }
+    html, body { margin: 0; min-height: 100%; }
+    button { font: inherit; cursor: pointer; }
+    .app {
+      width: min(100%, 430px);
+      height: 100dvh;
+      min-height: 630px;
+      margin: auto;
+      overflow: hidden;
+      position: relative;
+      background: #f7f6f2;
+      box-shadow: 0 0 70px #0008;
+    }
+    .topbar {
+      height: 68px;
+      position: absolute;
+      inset: 0 0 auto;
+      z-index: 8;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 9px 17px;
+      color: #fff;
+      background: linear-gradient(105deg, #152867, #17214e 72%, #253b80);
+      border-bottom: 3px solid #ffbf57;
+      box-shadow: 0 5px 18px #111d4c35;
+    }
+    .brand-small { display: block; font-size: 10px; font-weight: 900; letter-spacing: .19em; color: #8de6ef; }
+    .brand { display: block; margin-top: 2px; font-size: 20px; font-weight: 900; letter-spacing: -.035em; }
+    .rank-chip {
+      min-width: 72px;
+      padding: 5px 9px;
+      border: 1px solid #91efff;
+      border-radius: 11px;
+      color: #fff;
+      background: #ffffff17;
+      text-align: center;
+      box-shadow: inset 0 0 12px #79e5f630;
+    }
+    .rank-chip small { display: block; font-size: 9px; color: #8ce5f1; }
+    .rank-chip strong { font-size: 16px; }
+    .screen {
+      position: absolute;
+      top: 68px;
+      bottom: 74px;
+      width: 100%;
+      overflow: auto;
+      display: none;
+      scrollbar-width: none;
+    }
+    .screen::-webkit-scrollbar { display: none; }
+    .screen.active { display: block; }
+    .bottom-nav {
+      position: absolute;
+      inset: auto 0 0;
+      height: 74px;
+      z-index: 8;
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 2px;
+      padding: 6px 9px 7px;
+      background: #14255d;
+      border-top: 3px solid #ffbf57;
+      box-shadow: 0 -5px 20px #13224b45;
+    }
+    .nav-item {
+      min-height: 54px;
+      border: 0;
+      border-radius: 10px;
+      background: transparent;
+      color: #bfd3ff;
+      font-size: 12px;
+      font-weight: 900;
+      letter-spacing: .01em;
+    }
+    .nav-item span { display: block; font-size: 18px; line-height: 1.15; }
+    .nav-item.active { color: #15235d; background: #ffcf65; box-shadow: inset 0 -3px #dd9a35; }
+    .eyebrow { font-size: 11px; font-weight: 900; letter-spacing: .12em; }
+    .home-hero {
+      position: relative;
+      height: 296px;
+      overflow: hidden;
+      color: #fff;
+      background: #5fa9e7;
+    }
+    .home-hero img { width: 100%; height: 100%; object-fit: cover; object-position: 43% 48%; }
+    .home-hero::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(180deg, #12245900 31%, #0c1c45a8 69%, #08163cf0 100%);
+    }
+    .hero-topline {
+      position: absolute;
+      top: 12px;
+      left: 15px;
+      right: 15px;
+      z-index: 1;
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+    }
+    .stage-tag {
+      display: inline-block;
+      padding: 9px 12px;
+      color: #1a3067;
+      background: #fffaf0;
+      border: 2px solid #fff;
+      border-radius: 7px 15px 15px 7px;
+      box-shadow: 3px 4px 0 #11367d;
+      font-size: 12px;
+      font-weight: 900;
+    }
+    .series-tag { padding: 7px 9px; border-radius: 100px; background: #132358dd; color: #fff; font-size: 10px; font-weight: 900; }
+    .hero-copy { position: absolute; z-index: 1; left: 20px; bottom: 16px; right: 20px; text-shadow: 0 2px 7px #001134; }
+    .hero-copy .eyebrow { color: #ffda7a; }
+    .hero-copy h1 { margin: 5px 0 3px; font-size: 30px; line-height: 1.15; letter-spacing: -.04em; }
+    .hero-copy p { margin: 0; font-size: 14px; font-weight: 800; }
+    .home-content { padding: 15px 16px 24px; background: linear-gradient(180deg, #f7f6f2, #edf4fb); }
+    .mission-card {
+      position: relative;
+      padding: 15px 16px 16px;
+      border: 2px solid #d6e1f5;
+      border-radius: 18px;
+      background: #fff;
+      box-shadow: 5px 7px 0 #dce7f3;
+    }
+    .mission-head { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
+    .mission-head h2 { margin: 0; font-size: 20px; }
+    .mission-head .eyebrow { color: #2778aa; }
+    .today-chip { padding: 5px 8px; border-radius: 100px; background: #fff0d0; color: #845009; font-size: 11px; font-weight: 900; }
+    .mission-card p { margin: 8px 0 12px; font-size: 14px; line-height: 1.55; }
+    .progress-track { height: 11px; border-radius: 20px; background: #e7edf8; overflow: hidden; }
+    .progress-fill { display: block; height: 100%; width: 60%; border-radius: inherit; background: linear-gradient(90deg, #27b2c9, #5b7bea); }
+    .progress-caption { display: flex; justify-content: space-between; margin-top: 6px; font-size: 11px; font-weight: 900; color: #4d5b77; }
+    .primary-action, .secondary-action {
+      width: 100%;
+      min-height: 58px;
+      border: 0;
+      border-radius: 12px;
+      font-size: 18px;
+      font-weight: 900;
+      letter-spacing: .01em;
+    }
+    .primary-action { color: #fff; background: linear-gradient(130deg, #2367cc, #243da9); box-shadow: 0 5px 0 #132f75, 0 11px 17px #2868bd38; }
+    .primary-action:active { transform: translateY(3px); box-shadow: 0 2px 0 #132f75; }
+    .secondary-action { color: #243d89; background: #e3ebff; border: 2px solid #9eb8eb; }
+    .home-actions { display: grid; gap: 10px; margin: 18px 0 24px; }
+    .row-actions { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+    .row-actions button { min-height: 54px; border: 2px solid #bccde6; border-radius: 12px; background: #fff; color: #263b73; font-weight: 900; font-size: 14px; }
+    .section-title { display: flex; align-items: center; justify-content: space-between; margin: 0 2px 10px; }
+    .section-title h2 { margin: 0; font-size: 19px; }
+    .section-title span { color: #5b6990; font-size: 11px; font-weight: 800; }
+    .speech {
+      position: relative;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 14px 15px;
+      border: 2px solid #223c81;
+      border-radius: 16px;
+      background: #fff9e9;
+      box-shadow: 4px 5px 0 #b9cbe4;
+    }
+    .speech::after { content: ""; position: absolute; left: 22px; bottom: -10px; width: 15px; height: 15px; background: #fff9e9; border-right: 2px solid #223c81; border-bottom: 2px solid #223c81; transform: rotate(45deg); }
+    .speech strong { display: block; color: #1c4c9b; font-size: 12px; }
+    .speech p { margin: 5px 0 0; font-size: 14px; line-height: 1.5; }
+    .portrait {
+      flex: none;
+      width: 58px;
+      height: 58px;
+      border: 3px solid #fff;
+      border-radius: 14px;
+      background-image: url("assets/approved-ensemble.png");
+      background-size: 836px auto;
+      background-repeat: no-repeat;
+      box-shadow: 0 3px 9px #17306d3c;
+    }
+    .portrait.owl { background-position: -301px -16px; background-color: #c4eefa; }
+    .portrait.child { background-position: -89px -182px; background-color: #ffdf9f; }
+    .portrait.classmate { background-position: -201px -122px; background-color: #b8d6f5; }
+    .portrait.student { background-position: -331px -121px; background-color: #b8d6f5; }
+    .portrait.university { background-position: -471px -151px; background-color: #c6d7ed; }
+    .portrait.worker { background-position: -591px -191px; background-color: #d8e7f3; }
+    .portrait.professor { background-position: -596px -86px; background-color: #e8eef6; }
+    .portrait.sage { background-position: -726px -136px; background-color: #c8e7df; }
+    .cast-panel { margin-top: 18px; padding: 13px 12px; border-radius: 16px; background: #e8f0fd; border: 2px solid #cadcf5; }
+    .cast-panel h3 { margin: 0 0 11px; font-size: 15px; }
+    .cast-row { display: flex; align-items: flex-start; justify-content: space-between; gap: 5px; }
+    .cast-member { width: 31%; text-align: center; color: #354b7b; font-size: 11px; font-weight: 900; }
+    .cast-member .portrait { margin: 0 auto 5px; }
+    .character-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 9px; padding: 4px 0 16px; }
+    .character-card { min-height: 99px; padding: 8px 4px; text-align: center; border: 2px solid #d2def1; border-radius: 13px; background: #fff; color: #304474; font-size: 10px; font-weight: 900; }
+    .character-card .portrait { margin: 0 auto 6px; }
+    .path-preview { display: flex; justify-content: space-between; gap: 5px; margin-top: 22px; }
+    .path-step { flex: 1; padding: 8px 2px; text-align: center; border-radius: 10px; background: #dce7f4; color: #52617d; font-size: 11px; font-weight: 900; }
+    .path-step.current { background: #ffc85d; color: #233764; outline: 3px solid #f5aa30; }
+    .path-step.done { background: #bce7e7; color: #12606a; }
+    .quiz-screen { background: linear-gradient(180deg, #d9eafa, #f8f7f2 42%); }
+    .quiz-top { padding: 14px 16px 0; display: flex; align-items: center; justify-content: space-between; }
+    .quiz-top strong { font-size: 16px; }
+    .listen-state { padding: 5px 8px; border-radius: 100px; color: #305179; background: #e4efff; font-size: 11px; font-weight: 900; }
+    .quiz-art { position: relative; height: 175px; margin: 12px 14px; border-radius: 18px; overflow: hidden; border: 3px solid #fff; box-shadow: 0 8px 18px #12357835; }
+    .quiz-art img { width: 100%; height: 100%; object-fit: cover; object-position: 41% 48%; }
+    .quiz-art::after { content: ""; position: absolute; inset: 0; background: linear-gradient(90deg, #102761eb, #10276100 65%); }
+    .quiz-art-message { position: absolute; z-index: 1; left: 13px; bottom: 16px; max-width: 58%; color: #fff; text-shadow: 0 2px 5px #0a1c49; }
+    .quiz-art-message strong { display: block; color: #ffda7a; font-size: 12px; }
+    .quiz-art-message span { display: block; margin-top: 4px; font-size: 18px; font-weight: 900; line-height: 1.3; }
+    .question-card { margin: 0 14px; padding: 16px; border: 2px solid #b8c9e5; border-radius: 17px; background: #fff; box-shadow: 4px 5px 0 #d4e1f2; }
+    .question-meta { display: flex; justify-content: space-between; color: #3768a2; font-size: 11px; font-weight: 900; }
+    .question-card h2 { margin: 10px 0 2px; font-size: 19px; line-height: 1.5; }
+    .answer-list { display: grid; gap: 8px; padding: 14px 14px 0; }
+    .answer {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      width: 100%;
+      min-height: 58px;
+      padding: 7px 10px;
+      border: 2px solid #cad6ec;
+      border-radius: 12px;
+      color: #19336e;
+      background: #fff;
+      text-align: left;
+      font-size: 16px;
+      font-weight: 900;
+      box-shadow: 0 3px 0 #d7e1ef;
+    }
+    .answer b { display: grid; place-items: center; flex: none; width: 35px; height: 35px; border-radius: 9px; color: #fff; background: #3156aa; font-size: 16px; }
+    .answer.correct { border-color: #2b9a76; background: #e8fff3; color: #145c4c; }
+    .answer.correct b { background: #209d75; }
+    .answer.wrong { border-color: #da6e6e; background: #fff0ef; color: #8b3434; }
+    .answer.wrong b { background: #d55e5e; }
+    .feedback { min-height: 52px; margin: 12px 14px 0; padding: 10px 13px; border-radius: 12px; background: #edf3ff; color: #314f85; font-size: 13px; line-height: 1.45; font-weight: 800; }
+    .feedback.success { background: #e6fff2; color: #16654d; }
+    .feedback.fail { background: #fff1ee; color: #94403b; }
+    .quiz-next { margin: 11px 14px 22px; width: calc(100% - 28px); }
+    .battle-screen { padding: 17px 15px 30px; background: radial-gradient(circle at 75% 14%, #4254a9, #17235d 42%, #111b42); color: #fff; }
+    .page-kicker { color: #9de8f4; font-size: 12px; font-weight: 900; letter-spacing: .14em; }
+    .page-title { margin: 5px 0 12px; font-size: 30px; line-height: 1.1; }
+    .battle-hero { position: relative; height: 227px; overflow: hidden; border-radius: 17px; border: 2px solid #8394dc; background: #173986; box-shadow: 0 10px 0 #07102d; }
+    .battle-hero img { width: 100%; height: 100%; object-fit: cover; object-position: 52% 46%; }
+    .battle-hero::after { content: ""; position: absolute; inset: 0; background: linear-gradient(0deg, #111d53ec, #111d5300 65%); }
+    .battle-hero h2 { position: absolute; left: 15px; bottom: 33px; z-index: 1; margin: 0; font-size: 22px; text-shadow: 0 2px 7px #111c40; }
+    .battle-hero p { position: absolute; left: 15px; bottom: 12px; z-index: 1; margin: 0; font-size: 12px; font-weight: 900; }
+    .battle-list { display: grid; gap: 11px; margin-top: 25px; }
+    .battle-card { display: flex; align-items: center; gap: 12px; min-height: 81px; padding: 12px; border: 2px solid #6575ba; border-radius: 14px; background: #273778; color: #fff; text-align: left; }
+    .battle-card strong { display: block; margin-bottom: 3px; font-size: 17px; }
+    .battle-card small { display: block; color: #c8d5ff; font-size: 11px; line-height: 1.35; }
+    .battle-badge { display: grid; place-items: center; flex: none; width: 48px; height: 48px; border-radius: 12px; background: #ffcd66; color: #1d326f; font-size: 15px; font-weight: 900; }
+    .battle-note { margin: 15px 3px 0; color: #d1ddff; font-size: 12px; line-height: 1.5; }
+    .journey-screen { padding: 15px 15px 30px; background: linear-gradient(180deg, #fff4dc, #f4f8ff 42%, #e4eef8); }
+    .journey-screen .page-kicker { color: #2770a2; }
+    .journey-screen .page-title { color: #163365; }
+    .journey-art { display: block; width: 100%; height: 172px; object-fit: cover; object-position: center; border: 3px solid #fff; border-radius: 15px; box-shadow: 0 5px 16px #4d719c3b; }
+    .journey-intro { margin: 13px 2px 18px; font-size: 13px; line-height: 1.6; font-weight: 700; }
+    .stage-list { display: grid; gap: 9px; }
+    .stage-row { display: grid; grid-template-columns: 38px 1fr auto; align-items: center; gap: 11px; min-height: 70px; padding: 9px 12px; border: 2px solid #cbd8e7; border-radius: 13px; background: #fff; box-shadow: 0 3px 0 #dce7f0; }
+    .stage-row.current { border-color: #f4a83f; background: #fff6db; box-shadow: 0 3px 0 #da984b; }
+    .stage-icon { display: grid; place-items: center; width: 38px; height: 38px; border-radius: 10px; color: #fff; background: #4766a8; font-size: 16px; font-weight: 900; }
+    .stage-row.current .stage-icon { background: #f4a83f; color: #53320b; }
+    .stage-row strong { display: block; font-size: 16px; }
+    .stage-row small { display: block; color: #68758b; margin-top: 2px; font-size: 11px; }
+    .stage-status { font-size: 11px; color: #526888; font-weight: 900; }
+    .stage-row.current .stage-status { color: #9c5d0b; }
+    .demo-mark { margin-top: 16px; text-align: center; color: #7a849a; font-size: 11px; }
+    @media (max-width: 390px) {
+      .home-hero { height: 252px; }
+      .hero-copy h1 { font-size: 27px; }
+      .quiz-art { height: 138px; }
+      .answer { min-height: 54px; font-size: 15px; }
+      .answer-list { gap: 6px; }
+    }
+    @media (prefers-reduced-motion: no-preference) {
+      .nav-item, .answer, .battle-card, .stage-row { transition: transform .17s ease, background-color .17s ease; }
+      .nav-item:active, .answer:active, .battle-card:active { transform: scale(.97); }
+    }
+  </style>
+</head>
+<body>
+  <div class="app">
+    <header class="topbar">
+      <div><span class="brand-small">LEARN · BATTLE · GROW</span><span class="brand">AI用語クイズ</span></div>
+      <div class="rank-chip"><small>現在のステージ</small><strong>高校生</strong></div>
+    </header>
+
+    <main id="home" class="screen active">
+      <div class="home-hero">
+        <img src="assets/approved-ensemble.png" alt="承認済みの学校から研究の世界へ進むアニメキャラクター集合">
+        <div class="hero-topline"><span class="stage-tag">高校生 · 2年</span><span class="series-tag">STAGE 03 / 08</span></div>
+        <div class="hero-copy"><span class="eyebrow">YOUR NEXT CHAPTER</span><h1>知識で、次の<br>ステージへ。</h1><p>学ぶほど世界と仲間が広がる。</p></div>
+      </div>
+      <div class="home-content">
+        <div class="mission-card">
+          <div class="mission-head"><div><span class="eyebrow">QUEST BOARD</span><h2>今日の授業クエスト</h2></div><span class="today-chip">あと8問</span></div>
+          <p>授業を進めると進級テストに挑戦できます。</p>
+          <div class="progress-track"><span class="progress-fill"></span></div>
+          <div class="progress-caption"><span>12 / 20 問</span><span>60%</span></div>
+        </div>
+        <div class="home-actions">
+          <button class="primary-action" type="button" data-go="quiz">授業クエストを始める ›</button>
+          <div class="row-actions"><button type="button" data-go="battle">大会に挑む</button><button type="button" data-go="journey">進路を見る</button></div>
+        </div>
+        <div class="section-title"><h2>学園からのメッセージ</h2><span>相棒と一緒に</span></div>
+        <div class="speech"><div class="portrait owl" role="img" aria-label="相棒のフクロウ"></div><div><strong>相棒 ノヴァ</strong><p>今日は新しい言葉を3つ覚えたね。次の授業でライバルに差をつけよう！</p></div></div>
+        <div class="cast-panel"><h3>進級すると広がる世界</h3><div class="cast-row"><div class="cast-member"><div class="portrait student" role="img" aria-label="高校生の主人公"></div>高校生</div><div class="cast-member"><div class="portrait university" role="img" aria-label="大学生の仲間"></div>大学生</div><div class="cast-member"><div class="portrait worker" role="img" aria-label="社会人の先輩"></div>社会人</div></div></div>
+        <div class="path-preview"><span class="path-step done">小学生</span><span class="path-step done">中学生</span><span class="path-step current">高校生</span><span class="path-step">大学生</span><span class="path-step">社会人</span></div>
+        <p class="demo-mark">画面・数値・台詞はデザインサンプル</p>
+      </div>
+    </main>
+
+    <main id="quiz" class="screen quiz-screen">
+      <div class="quiz-top"><strong>授業クエスト · 07 / 20</strong><span class="listen-state">音声回答もできる</span></div>
+      <div class="quiz-art"><img src="assets/approved-ensemble.png" alt="学校を舞台にしたアニメの主人公たち"><div class="quiz-art-message"><strong>CLASSROOM QUEST</strong><span>知ってる言葉が、<br>力になる。</span></div></div>
+      <div class="question-card"><div class="question-meta"><span>QUESTION 07</span><span>AIの仕組み</span></div><h2>AIが外部の資料を調べてから回答する仕組みは？</h2></div>
+      <div class="answer-list" aria-label="回答の選択肢">
+        <button class="answer" type="button" data-correct="true"><b>1</b>RAG</button>
+        <button class="answer" type="button"><b>2</b>ファインチューニング</button>
+        <button class="answer" type="button"><b>3</b>トークン</button>
+        <button class="answer" type="button"><b>4</b>エージェント</button>
+        <button class="answer" type="button"><b>5</b>プロンプト</button>
+      </div>
+      <div class="feedback" id="feedback" role="status">選択肢をタップするか、音声で番号を答えます。</div>
+      <button class="secondary-action quiz-next" type="button" id="reset-answer">もう一度見る</button>
+    </main>
+
+    <main id="battle" class="screen battle-screen">
+      <span class="page-kicker">CHALLENGE ARENA</span><h1 class="page-title">大会に挑もう</h1>
+      <div class="battle-hero"><img src="assets/approved-ensemble.png" alt="知識で競い合う学生たち"><h2>教室から、勝負の舞台へ。</h2><p>称号とトロフィーを目指す</p></div>
+      <div class="battle-list">
+        <button class="battle-card" type="button"><span class="battle-badge">連</span><span><strong>連続正解チャレンジ</strong><small>何問続けて正解できるか、自分の記録に挑戦</small></span></button>
+        <button class="battle-card" type="button"><span class="battle-badge">VS</span><span><strong>ライバル早押し</strong><small>ライバルと1対1。答える速さも勝負になる</small></span></button>
+        <button class="battle-card" type="button"><span class="battle-badge">難</span><span><strong>超難問大会</strong><small>知識を深めて、特別な称号を手に入れる</small></span></button>
+      </div>
+      <p class="battle-note">大会の解禁条件やルールは設計中です。この画面は世界観を確認するためのデザイン案です。</p>
+    </main>
+
+    <main id="journey" class="screen journey-screen">
+      <span class="page-kicker">THE JOURNEY</span><h1 class="page-title">知識の進路図鑑</h1>
+      <img class="journey-art" src="assets/approved-ensemble.png" alt="学生、社会人、学者、仙人へ広がるアニメの世界">
+      <p class="journey-intro">学ぶ舞台は学校から社会、研究の世界へ。進級のたびに新しい仲間と景色が待っています。</p>
+      <div class="character-grid" aria-label="登場キャラクター">
+        <div class="character-card"><div class="portrait child" role="img" aria-label="小学生"></div>小学生</div>
+        <div class="character-card"><div class="portrait classmate" role="img" aria-label="学園の仲間"></div>学園の仲間</div>
+        <div class="character-card"><div class="portrait student" role="img" aria-label="高校生の主人公"></div>高校生</div>
+        <div class="character-card"><div class="portrait university" role="img" aria-label="大学生"></div>大学生</div>
+        <div class="character-card"><div class="portrait worker" role="img" aria-label="社会人"></div>社会人</div>
+        <div class="character-card"><div class="portrait professor" role="img" aria-label="AI研究者"></div>AI研究者</div>
+        <div class="character-card"><div class="portrait sage" role="img" aria-label="AI仙人"></div>AI仙人</div>
+        <div class="character-card"><div class="portrait owl" role="img" aria-label="フクロウの相棒"></div>相棒ノヴァ</div>
+      </div>
+      <div class="stage-list">
+        <div class="stage-row"><span class="stage-icon">小</span><span><strong>小学生</strong><small>用語の最初の一歩</small></span><span class="stage-status">卒業</span></div>
+        <div class="stage-row"><span class="stage-icon">中</span><span><strong>中学生</strong><small>知識をつなげる</small></span><span class="stage-status">卒業</span></div>
+        <div class="stage-row current"><span class="stage-icon">高</span><span><strong>高校生</strong><small>新しい分野に挑戦中</small></span><span class="stage-status">現在地</span></div>
+        <div class="stage-row"><span class="stage-icon">大</span><span><strong>大学生</strong><small>専門知識を学ぶ</small></span><span class="stage-status">次の舞台</span></div>
+        <div class="stage-row"><span class="stage-icon">社</span><span><strong>一般・社会人</strong><small>仕事で知識を使う</small></span><span class="stage-status">未到達</span></div>
+        <div class="stage-row"><span class="stage-icon">教</span><span><strong>大学教授</strong><small>知識を教える</small></span><span class="stage-status">未到達</span></div>
+        <div class="stage-row"><span class="stage-icon">AI</span><span><strong>AI学者</strong><small>まだない答えを探す</small></span><span class="stage-status">未到達</span></div>
+        <div class="stage-row"><span class="stage-icon">仙</span><span><strong>AI仙人</strong><small>知恵の頂点へ</small></span><span class="stage-status">未到達</span></div>
+      </div>
+      <p class="demo-mark">ステージ内の小区分や合格条件は今後確定</p>
+    </main>
+
+    <nav class="bottom-nav" aria-label="画面の切り替え">
+      <button class="nav-item active" type="button" data-go="home"><span>⌂</span>ホーム</button>
+      <button class="nav-item" type="button" data-go="quiz"><span>✎</span>授業</button>
+      <button class="nav-item" type="button" data-go="battle"><span>✦</span>大会</button>
+      <button class="nav-item" type="button" data-go="journey"><span>⇧</span>進路</button>
+    </nav>
+  </div>
+  <script>
+    const screens = [...document.querySelectorAll('.screen')];
+    const navItems = [...document.querySelectorAll('.nav-item')];
+    const feedback = document.getElementById('feedback');
+    const answers = [...document.querySelectorAll('.answer')];
+    function showScreen(id) {
+      if (!document.getElementById(id)) return;
+      screens.forEach(screen => screen.classList.toggle('active', screen.id === id));
+      navItems.forEach(item => item.classList.toggle('active', item.dataset.go === id));
+      document.getElementById(id).scrollTop = 0;
+    }
+    document.querySelectorAll('[data-go]').forEach(button => button.addEventListener('click', () => showScreen(button.dataset.go)));
+    if (location.hash) showScreen(location.hash.slice(1));
+    answers.forEach(button => button.addEventListener('click', () => {
+      answers.forEach(answer => answer.classList.remove('correct', 'wrong'));
+      const correct = button.dataset.correct === 'true';
+      button.classList.add(correct ? 'correct' : 'wrong');
+      if (!correct) answers[0].classList.add('correct');
+      feedback.className = `feedback ${correct ? 'success' : 'fail'}`;
+      feedback.textContent = correct ? '正解！ RAGは外部資料を検索し、その内容を参照して答えを作る方法です。' : '惜しい！ 正解は1番のRAG。資料を探してから答える仕組みです。';
+    }));
+    document.getElementById('reset-answer').addEventListener('click', () => {
+      answers.forEach(answer => answer.classList.remove('correct', 'wrong'));
+      feedback.className = 'feedback';
+      feedback.textContent = '選択肢をタップするか、音声で番号を答えます。';
+    });
+  </script>
+</body>
+</html>

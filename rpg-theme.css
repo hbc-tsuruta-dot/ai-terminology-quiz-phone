@@ -1,0 +1,260 @@
+[data-rpg="elementary"] {
+  --rpg-paper: #fff6dc;
+  --rpg-ink: #2b2416;
+  --rpg-wood: #8a5a2b;
+  --rpg-correct: #4fd8c4;
+  --rpg-correct-bg: #1d6b66;
+  --rpg-wrong: #e39aa6;
+  --rpg-wrong-bg: #5a2f3f;
+  --rpg-gold: #ffdc84;
+}
+
+#home[data-rpg="elementary"] .scene {
+  background-image: var(--rpg-scene-image);
+  background-size: cover;
+  background-position: center;
+}
+
+#quiz[data-rpg="elementary"] {
+  background:
+    linear-gradient(#fffaf0e6, #f5f8fce8 48%),
+    var(--rpg-scene-image) center / cover;
+}
+
+#quiz[data-rpg="elementary"] .dialogue,
+#quiz[data-rpg="elementary"] .card,
+#battle[data-rpg="elementary"] .card {
+  border: 3px solid var(--rpg-wood);
+  border-radius: 12px;
+  background: var(--rpg-paper);
+  color: var(--rpg-ink);
+  box-shadow: 4px 5px 0 #5d3818;
+}
+
+#quiz[data-rpg="elementary"] .question,
+#battle[data-rpg="elementary"] .question {
+  min-height: 1.5em;
+  color: var(--rpg-ink);
+  font-size: 19px;
+}
+
+#quiz[data-rpg="elementary"] .answer,
+#battle[data-rpg="elementary"] .answer {
+  min-height: 52px;
+  border: 2px solid #b98848;
+  border-radius: 10px;
+  background: #fffdf4;
+  color: #1f315e;
+  font-size: 16px;
+}
+
+#quiz[data-rpg="elementary"] .answer.correct,
+#battle[data-rpg="elementary"] .answer.correct {
+  border-color: var(--rpg-correct);
+  background: #d9fff8;
+  box-shadow: 0 0 16px #4fd8c480;
+}
+
+#quiz[data-rpg="elementary"] .answer.wrong,
+#battle[data-rpg="elementary"] .answer.wrong {
+  border-color: var(--rpg-wrong);
+  background: #ffe7eb;
+}
+
+#quiz[data-rpg="elementary"] .answer[aria-disabled="true"]:not(.correct):not(.wrong),
+#battle[data-rpg="elementary"] .answer[aria-disabled="true"]:not(.correct):not(.wrong) {
+  opacity: .5;
+}
+
+#quiz[data-rpg="elementary"] .answer.correct b,
+#battle[data-rpg="elementary"] .answer.correct b {
+  background: var(--rpg-correct-bg);
+}
+
+#quiz[data-rpg="elementary"] .answer.wrong b,
+#battle[data-rpg="elementary"] .answer.wrong b {
+  background: var(--rpg-wrong-bg);
+}
+
+#battle[data-rpg="elementary"] .battle-scene {
+  height: 220px;
+  background-image: var(--rpg-battle-bg);
+  background-size: cover;
+  background-position: center;
+}
+
+#battle[data-rpg="elementary"] .battle-scene::after {
+  inset: 50% 0 0;
+}
+
+#battle[data-rpg="elementary"] .opponent-portrait {
+  display: none;
+}
+
+#battle[data-rpg="elementary"] .rival {
+  margin-top: 10px;
+  border-color: #7fb88c;
+  background: #203f40;
+}
+
+.rpg-enemy {
+  position: absolute;
+  z-index: 1;
+  right: 14px;
+  bottom: 16px;
+  width: min(44%, 160px);
+  max-height: 178px;
+  object-fit: contain;
+  filter: drop-shadow(0 10px 10px #06112c99);
+  transform-origin: 50% 100%;
+}
+
+.rpg-enemy[hidden] {
+  display: none;
+}
+
+.rpg-shadow {
+  position: absolute;
+  right: 24px;
+  bottom: 15px;
+  width: 132px;
+  height: 22px;
+  border-radius: 50%;
+  background: #07112680;
+}
+
+.rpg-gauge-row {
+  display: none;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+  margin: 10px 14px 0;
+}
+
+#battle[data-rpg="elementary"] .rpg-gauge-row {
+  display: grid;
+}
+
+.rpg-gauge {
+  padding: 8px 9px;
+  border: 2px solid #7797d4;
+  border-radius: 10px;
+  background: #1b2d66;
+}
+
+.rpg-gauge small {
+  display: block;
+  margin-bottom: 4px;
+  color: #d8e6ff;
+  font-size: 10px;
+  font-weight: 900;
+}
+
+.rpg-gauge-icons {
+  display: flex;
+  gap: 4px;
+}
+
+.rpg-gauge-icons img {
+  width: 24px;
+  height: 24px;
+  object-fit: contain;
+}
+
+.rpg-gauge-icons img.inactive {
+  opacity: .25;
+  filter: grayscale(1);
+}
+
+.rpg-fx-layer {
+  pointer-events: none;
+  position: absolute;
+  z-index: 2;
+  inset: 0;
+}
+
+.rpg-fx-slash,
+.rpg-fx-hit {
+  position: absolute;
+  pointer-events: none;
+  opacity: 0;
+}
+
+.rpg-fx-slash {
+  left: 30%;
+  top: 30%;
+  width: 92px;
+}
+
+.rpg-fx-hit {
+  right: 22%;
+  top: 34%;
+  width: 70px;
+}
+
+.rpg-fx-attack .rpg-fx-slash {
+  animation: rpg-slash 500ms ease-out;
+}
+
+.rpg-fx-attack .rpg-fx-hit {
+  animation: rpg-hit 500ms ease-out;
+}
+
+.rpg-enemy.is-hit {
+  animation: rpg-enemy-hit 500ms ease-out;
+}
+
+.rpg-enemy.is-hurt {
+  animation: rpg-enemy-hurt 350ms ease-out;
+}
+
+.rpg-enemy.is-defeated {
+  animation: rpg-enemy-defeated 700ms ease-in forwards;
+}
+
+.answer.rpg-glow {
+  animation: rpg-answer-glow 300ms ease-out;
+}
+
+@keyframes rpg-slash {
+  0% { opacity: 0; transform: translate(-50px, 42px) rotate(-18deg) scale(.8); }
+  30% { opacity: 1; }
+  100% { opacity: 0; transform: translate(64px, -12px) rotate(-18deg) scale(1.08); }
+}
+
+@keyframes rpg-hit {
+  35% { opacity: 0; transform: scale(.75); }
+  55% { opacity: 1; transform: scale(1.12); }
+  100% { opacity: 0; transform: scale(1.35); }
+}
+
+@keyframes rpg-enemy-hit {
+  35% { transform: translateX(0); }
+  60% { transform: translateX(10px) rotate(2deg); }
+  100% { transform: translateX(0); }
+}
+
+@keyframes rpg-enemy-hurt {
+  45% { transform: translateX(-10px) scale(1.03); }
+  100% { transform: translateX(0) scale(1); }
+}
+
+@keyframes rpg-enemy-defeated {
+  0% { opacity: 1; transform: scale(1); }
+  100% { opacity: 0; transform: translateY(12px) scale(.65); }
+}
+
+@keyframes rpg-answer-glow {
+  0%, 100% { box-shadow: 0 0 16px #4fd8c480; }
+  50% { box-shadow: 0 0 24px #4fd8c4; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  #quiz[data-rpg="elementary"] .answer,
+  #battle[data-rpg="elementary"] .answer,
+  .rpg-enemy,
+  .rpg-fx-slash,
+  .rpg-fx-hit {
+    transition: none !important;
+    animation: none !important;
+  }
+}
